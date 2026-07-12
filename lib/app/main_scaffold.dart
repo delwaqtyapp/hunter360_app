@@ -1,33 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../core/l10n/app_localizations.dart';
 
-class MainScaffold extends StatelessWidget {
+class MainScaffold extends ConsumerWidget {
   final Widget child;
   const MainScaffold({super.key, required this.child});
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final currentPath = GoRouterState.of(context).uri.path;
+  int _getCurrentIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.toString();
+    if (location.startsWith('/map')) return 1;
+    if (location.startsWith('/controllers')) return 2;
+    if (location.startsWith('/schedules')) return 3;
+    if (location.startsWith('/alarms')) return 4;
+    return 0;
+  }
 
-    int currentIndex = 0;
-    if (currentPath.startsWith('/map')) currentIndex = 1;
-    else if (currentPath.startsWith('/controllers')) currentIndex = 2;
-    else if (currentPath.startsWith('/alarms')) currentIndex = 3;
-    else if (currentPath.startsWith('/settings')) currentIndex = 4;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = _getCurrentIndex(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.appName),
+        title: Row(
+          children: [
+            Image.asset('assets/images/logo_hunter.png', height: 28, errorBuilder: (ctx, e, s) => const Icon(Icons.water_drop, color: Colors.white)),
+            const SizedBox(width: 8),
+            const Text('Hunter 360', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        backgroundColor: const Color(0xFF1B5E20),
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
+            onPressed: () => context.push('/alarms'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => context.push('/settings'),
           ),
         ],
       ),
-      drawer: _buildDrawer(context, l10n, currentPath),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Color(0xFF1B5E20)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset('assets/images/logo_hunter.png', height: 48, errorBuilder: (ctx, e, s) => const Icon(Icons.water_drop, color: Colors.white, size: 48)),
+                  const SizedBox(height: 8),
+                  const Text('Hunter 360', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text('SCADA Mobile', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                ],
+              ),
+            ),
+            _drawerItem(context, Icons.dashboard, 'Dashboard', '/'),
+            _drawerItem(context, Icons.map, 'Map Control', '/map'),
+            _drawerItem(context, Icons.settings_input_antenna, 'Controllers', '/controllers'),
+            _drawerItem(context, Icons.schedule, 'Schedules', '/schedules'),
+            _drawerItem(context, Icons.water, 'Flow Management', '/flow'),
+            _drawerItem(context, Icons.wb_sunny, 'Weather', '/weather'),
+            _drawerItem(context, Icons.warning, 'Alarms', '/alarms'),
+            _drawerItem(context, Icons.assessment, 'Reports', '/reports'),
+            const Divider(),
+            _drawerItem(context, Icons.dashboard_customize, 'Dashboards', '/settings'),
+            _drawerItem(context, Icons.person, 'User Management', '/settings'),
+            _drawerItem(context, Icons.devices, 'Device Management', '/settings'),
+            const Divider(),
+            _drawerItem(context, Icons.settings, 'Settings', '/settings'),
+          ],
+        ),
+      ),
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -36,102 +82,31 @@ class MainScaffold extends StatelessWidget {
             case 0: context.go('/');
             case 1: context.go('/map');
             case 2: context.go('/controllers');
-            case 3: context.go('/alarms');
-            case 4: context.go('/settings');
+            case 3: context.go('/schedules');
+            case 4: context.go('/alarms');
           }
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.dashboard),
-            label: l10n.dashboard,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.map),
-            label: l10n.map,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.precision_manufacturing),
-            label: l10n.controllers,
-          ),
-          BottomNavigationBarItem(
-            icon: Badge(
-              label: const Text('3'),
-              child: const Icon(Icons.warning_amber),
-            ),
-            label: l10n.alarms,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
-            label: l10n.settings,
-          ),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF1B5E20),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings_input_antenna), label: 'Controllers'),
+          BottomNavigationBarItem(icon: Icon(Icons.schedule), label: 'Schedules'),
+          BottomNavigationBarItem(icon: Icon(Icons.warning), label: 'Alarms'),
         ],
       ),
     );
   }
 
-  Widget _buildDrawer(BuildContext context, AppLocalizations l10n, String currentPath) {
-    return Drawer(
-      child: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1B5E20),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white24,
-                    child: Icon(Icons.person, size: 36, color: Colors.white),
-                  ),
-                  SizedBox(height: 12),
-                  Text('Hunter 360', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text('Comprehensive Irrigation', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  _drawerItem(context, Icons.dashboard, l10n.dashboard, '/', currentPath),
-                  _drawerItem(context, Icons.map, l10n.map, '/map', currentPath),
-                  _drawerItem(context, Icons.precision_manufacturing, l10n.controllers, '/controllers', currentPath),
-                  _drawerItem(context, Icons.schedule, l10n.schedules, '/schedules', currentPath),
-                  _drawerItem(context, Icons.water_drop, l10n.flowManagement, '/flow', currentPath),
-                  _drawerItem(context, Icons.cloud, l10n.weather, '/weather', currentPath),
-                  _drawerItem(context, Icons.warning_amber, l10n.alarms, '/alarms', currentPath),
-                  _drawerItem(context, Icons.assessment, l10n.reports, '/reports', currentPath),
-                  const Divider(),
-                  _drawerItem(context, Icons.settings, l10n.settings, '/settings', currentPath),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: Text(l10n.logout, style: const TextStyle(color: Colors.red)),
-              onTap: () => context.go('/login'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _drawerItem(BuildContext context, IconData icon, String label, String path, String currentPath) {
-    final isSelected = currentPath == path;
+  Widget _drawerItem(BuildContext context, IconData icon, String title, String route) {
     return ListTile(
-      leading: Icon(icon, color: isSelected ? const Color(0xFF1B5E20) : null),
-      title: Text(label, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-      selected: isSelected,
-      selectedTileColor: const Color(0xFF1B5E20).withOpacity(0.1),
+      leading: Icon(icon, color: const Color(0xFF1B5E20)),
+      title: Text(title),
       onTap: () {
         Navigator.pop(context);
-        context.go(path);
+        context.go(route);
       },
     );
   }

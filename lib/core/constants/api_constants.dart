@@ -1,24 +1,28 @@
 class ApiConstants {
-  static const String login = '/api/v1/auth/login';
-  static const String register = '/api/v1/auth/register';
-  static const String logout = '/api/v1/auth/logout';
-  static const String refreshToken = '/api/v1/auth/refresh';
-  static const String controllers = '/api/v1/controllers';
-  static String controllerById(String id) => '/api/v1/controllers/$id';
-  static String controllerCommand(String id) => '/api/v1/controllers/$id/command';
-  static String controllerStatus(String id) => '/api/v1/controllers/$id/status';
-  static const String schedules = '/api/v1/schedules';
-  static String scheduleById(String id) => '/api/v1/schedules/$id';
-  static const String weatherStations = '/api/v1/weather/stations';
-  static String weatherData(String stationId) => '/api/v1/weather/$stationId';
-  static const String flowMeters = '/api/v1/flow/meters';
-  static String flowData(String meterId) => '/api/v1/flow/$meterId';
-  static const String alarms = '/api/v1/alarms';
-  static String alarmAcknowledge(String id) => '/api/v1/alarms/$id/acknowledge';
-  static const String reports = '/api/v1/reports';
-  static String reportGenerate(String type) => '/api/v1/reports/$type';
-  static const String userProfile = '/api/v1/user/profile';
-  static const String userSettings = '/api/v1/user/settings';
-  static const String notifications = '/api/v1/notifications';
-  static String dashboardData(String id) => '/api/v1/dashboard/$id';
+  static const String authenticate = '/Dashboard/Authenticate';
+  static const String viewsList = '/Dashboard/ViewsList';
+  static const String viewsTree = '/Dashboard/ViewsTree';
+  static const String subDashboards = '/Dashboard/SubDashboards';
+  static String viewByName(String name) => '/Dashboard/Views/$name';
+  static const String layout = '/Dashboard/Layout';
+  static const String saveLayout = '/Dashboard/Layout/';
+  static const String magicBoxTemplates = '/Dashboard/Views/__MagicBoxTemplates';
+
+  static const String tagsValuesList = '/api/Tags/ValuesList';
+  static String tagValue(String tagName) => '/api/Tags/Values?TagName=$tagName';
+  static const String tagsWrite = '/api/Tags/Values';
+  static const String tagsList = '/api/tags/list?TagName=*';
+
+  static const String alarmsCurrent = '/api/Alarms/Current';
+  static String alarmAck(String alarmId) => '/api/Alarms/Ack?AlarmId=$alarmId';
+  static String alarmsById(String id) => '/api/$id/alarms.json';
+  static String chartById(String id) => '/api/$id/chart.json';
+
+  static const String historicalTagValues = '/api/Historical/TagValues';
+  static const String historicalAlarms = '/api/Historical/Alarms';
+
+  static const String dataSetsList = '/api/DataSets/List';
+
+  static String staticResource(String filename) =>
+      '/Dashboard/StaticResources/$filename';
 }

@@ -1,42 +1,64 @@
-import 'package:equatable/equatable.dart';
-
-class User extends Equatable {
+class User {
   final String id;
   final String name;
   final String email;
-  final String? photoUrl;
   final String role;
-  final DateTime createdAt;
+  final int accessLevel;
+  final int autoLogoutMinutes;
+  final String token;
+  final DateTime? createdAt;
 
   const User({
     required this.id,
     required this.name,
     required this.email,
-    this.photoUrl,
-    this.role = 'user',
-    required this.createdAt,
+    this.role = 'viewer',
+    this.accessLevel = 0,
+    this.autoLogoutMinutes = 0,
+    this.token = '',
+    this.createdAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  bool get isAdmin => role == 'admin' || role == 'Administrator';
+  bool get isOperator => role == 'operator' || role == 'Operator' || isAdmin;
+  bool get isViewer => true;
+
+  User copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? role,
+    int? accessLevel,
+    int? autoLogoutMinutes,
+    String? token,
+  }) {
     return User(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      photoUrl: json['photoUrl'],
-      role: json['role'] ?? 'user',
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      accessLevel: accessLevel ?? this.accessLevel,
+      autoLogoutMinutes: autoLogoutMinutes ?? this.autoLogoutMinutes,
+      token: token ?? this.token,
+      createdAt: createdAt,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'email': email,
-    'photoUrl': photoUrl,
-    'role': role,
-    'createdAt': createdAt.toIso8601String(),
+    'UserName': name,
+    'Roles': [role],
+    'AccessLevel': accessLevel,
+    'AutoLogOutMin': autoLogoutMinutes,
+    'Token': token,
   };
 
-  @override
-  List<Object?> get props => [id, name, email, photoUrl, role, createdAt];
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json['UserName'] ?? '',
+    name: json['UserName'] ?? '',
+    email: json['UserName'] ?? '',
+    role: (json['Roles'] as List<dynamic>?)?.first?.toString() ?? 'viewer',
+    accessLevel: json['AccessLevel'] ?? 0,
+    autoLogoutMinutes: json['AutoLogOutMin'] ?? 0,
+    token: json['Token'] ?? '',
+  );
 }

@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../constants/app_constants.dart';
-import '../errors/exceptions.dart';
+import 'package:hunter360_app/core/constants/app_constants.dart';
+import 'package:hunter360_app/core/errors/exceptions.dart';
 
 final dioProvider = Provider<Dio>((ref) {
+  final serverUrl = ref.watch(serverUrlProvider);
   final dio = Dio(BaseOptions(
-    baseUrl: AppConstants.baseUrl,
+    baseUrl: serverUrl,
     connectTimeout: const Duration(seconds: 30),
     receiveTimeout: const Duration(seconds: 30),
     headers: {
@@ -16,9 +17,10 @@ final dioProvider = Provider<Dio>((ref) {
 
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
-      // Add auth token here
-      // final token = await getToken();
-      // options.headers['Authorization'] = 'Bearer $token';
+      final token = ref.read(authTokenProvider);
+      if (token.isNotEmpty) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
       handler.next(options);
     },
     onResponse: (response, handler) {
@@ -32,9 +34,8 @@ final dioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
-final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(ref.read(dioProvider));
-});
+final authTokenProvider = StateProvider<String>((ref) => '');
+final serverUrlProvider = StateProvider<String>((ref) => AppConstants.defaultServerUrl);
 
 class ApiClient {
   final Dio _dio;
@@ -49,9 +50,9 @@ class ApiClient {
     }
   }
 
-  Future<Response> post(String path, {dynamic data}) async {
+  Future<Response> post(String path, {dynamic data, String? contentType}) async {
     try {
-      return await _dio.post(path, data: data);
+      return await _dio.post(path, data: data, options: contentType != null ? Options(contentType: contentType) : null);
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -96,3 +97,7 @@ class TimeoutException implements Exception {
   final String message;
   const TimeoutException(this.message);
 }
+
+final apiClientProvider = Provider<ApiClient>((ref) {
+  return ApiClient(ref.read(dioProvider));
+});
