@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hunter360_app/features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../features/map_control/presentation/pages/map_page.dart';
@@ -16,18 +15,8 @@ import '../features/settings/presentation/pages/settings_page.dart';
 import 'main_scaffold.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
-
   return GoRouter(
-    initialLocation: '/login',
-    redirect: (context, state) {
-      final isLoggedIn = authState.status == AuthStatus.authenticated;
-      final isLoginRoute = state.uri.toString() == '/login';
-
-      if (!isLoggedIn && !isLoginRoute) return '/login';
-      if (isLoggedIn && isLoginRoute) return '/';
-      return null;
-    },
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/login',

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/dashboard_provider.dart';
 
-class WeatherWidget extends ConsumerWidget {
+class WeatherWidget extends StatelessWidget {
   const WeatherWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(dashboardProvider);
-    if (state.weatherStations.isEmpty) return const SizedBox.shrink();
-    final station = state.weatherStations.first;
-
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -34,29 +28,25 @@ class WeatherWidget extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(station.name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+                  const Text('Weather Station', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 4),
                   Text(
-                    '${station.temperature.toStringAsFixed(1)}°C',
+                    '--\u00B0C',
                     style: const TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-              Icon(
-                station.temperature > 25 ? Icons.wb_sunny : Icons.cloud,
-                color: Colors.white,
-                size: 48,
-              ),
+              const Icon(Icons.cloud, color: Colors.white, size: 48),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _weatherItem(Icons.water_drop, '${station.humidity.toStringAsFixed(0)}%', 'Humidity'),
-              _weatherItem(Icons.air, '${station.windSpeed.toStringAsFixed(1)} km/h', 'Wind'),
-              _weatherItem(Icons.grain, '${station.rainfall.toStringAsFixed(1)} mm', 'Rain'),
-              _weatherItem(Icons.thermostat, '${station.soilMoisture.toStringAsFixed(0)}%', 'Soil'),
+              _weatherItem(Icons.water_drop, '--%', 'Humidity'),
+              _weatherItem(Icons.air, '-- km/h', 'Wind'),
+              _weatherItem(Icons.grain, '-- mm', 'Rain'),
+              _weatherItem(Icons.thermostat, '--%', 'Soil'),
             ],
           ),
         ],

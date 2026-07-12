@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../dashboard/presentation/providers/dashboard_provider.dart';
-import '../../../dashboard/domain/entities/controller.dart';
+import '../providers/controllers_provider.dart';
 
 class ControllersListPage extends ConsumerWidget {
   const ControllersListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(dashboardProvider);
+    final state = ref.watch(controllersProvider);
 
     return Scaffold(
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: state.controllers.length,
-        itemBuilder: (context, index) {
-          final controller = state.controllers[index];
-          return _controllerCard(context, controller);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFF1B5E20),
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      body: state.isLoading
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFF1B5E20)))
+          : state.controllers.isEmpty
+              ? const Center(child: Text('No controllers found'))
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.controllers.length,
+                  itemBuilder: (context, index) {
+                    final controller = state.controllers[index];
+                    return _controllerCard(context, controller);
+                  },
+                ),
     );
   }
 
-  Widget _controllerCard(BuildContext context, ControllerEntity controller) {
+  Widget _controllerCard(BuildContext context, IrrigationController controller) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -44,13 +42,10 @@ class ControllersListPage extends ConsumerWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: controller.isOnline ? Colors.green.shade50 : Colors.red.shade50,
+                      color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      Icons.precision_manufacturing,
-                      color: controller.isOnline ? Colors.green : Colors.red,
-                    ),
+                    child: const Icon(Icons.precision_manufacturing, color: Color(0xFF1B5E20)),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -59,20 +54,20 @@ class ControllersListPage extends ConsumerWidget {
                       children: [
                         Text(controller.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
-                        Text(controller.model, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                        Text(controller.displayName, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
                       ],
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: controller.isOnline ? Colors.green.shade50 : Colors.red.shade50,
+                      color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      controller.isOnline ? 'Online' : 'Offline',
+                      'Online',
                       style: TextStyle(
-                        color: controller.isOnline ? Colors.green.shade700 : Colors.red.shade700,
+                        color: Colors.green.shade700,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -84,9 +79,8 @@ class ControllersListPage extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _infoChip(Icons.water_drop, '${controller.activeValves}/${controller.valveCount}', 'Valves'),
-                  _infoChip(Icons.language, controller.ipAddress, 'IP'),
-                  _infoChip(Icons.access_time, _timeAgo(controller.lastSeen), 'Last Seen'),
+                  _infoChip(Icons.tag, '${controller.tagCount}', 'Tags'),
+                  _infoChip(Icons.settings_input_antenna, controller.type, 'Controller'),
                 ],
               ),
             ],
@@ -105,12 +99,5 @@ class ControllersListPage extends ConsumerWidget {
         Text(label, style: TextStyle(fontSize: 10, color: Colors.grey.shade400)),
       ],
     );
-  }
-
-  String _timeAgo(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
   }
 }

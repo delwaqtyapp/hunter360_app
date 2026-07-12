@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:hunter360_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:hunter360_app/features/alarms/presentation/providers/alarms_provider.dart';
 import 'package:hunter360_app/features/controllers/presentation/providers/controllers_provider.dart';
+import 'package:hunter360_app/features/dashboard/presentation/providers/dashboard_provider.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -17,6 +17,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   void initState() {
     super.initState();
     Future.microtask(() {
+      ref.read(dashboardProvider.notifier).loadDashboard();
       ref.read(alarmsProvider.notifier).loadAlarms();
       ref.read(controllersProvider.notifier).loadControllers();
     });
@@ -24,13 +25,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authProvider);
+    final dashboardState = ref.watch(dashboardProvider);
     final alarmsState = ref.watch(alarmsProvider);
     final controllersState = ref.watch(controllersProvider);
-    final user = authState.user;
 
     return RefreshIndicator(
       onRefresh: () async {
+        ref.read(dashboardProvider.notifier).loadDashboard();
         ref.read(alarmsProvider.notifier).loadAlarms();
         ref.read(controllersProvider.notifier).loadControllers();
       },
@@ -40,7 +41,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF1B5E20), Color(0xFF388E3C)]),
+              gradient: const LinearGradient(colors: [Color(0xFF156082), Color(0xFF1B5E20)]),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -48,14 +49,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: Colors.white.withOpacity(0.2),
-                  child: Text((user?.name ?? 'A')[0].toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: const Text('H', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Welcome, ${user?.name ?? 'Admin'}', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text('Hunter 360', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                       Text(DateFormat('EEE, MMM dd, yyyy').format(DateTime.now()), style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
                     ],
                   ),
@@ -65,20 +66,27 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             ),
           ),
           const SizedBox(height: 20),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.4,
-            children: [
-              _statCard(Icons.settings_input_antenna, 'Controllers', '${controllersState.controllers.length}', 'Online', const Color(0xFF4CAF50), () => context.go('/controllers')),
-              _statCard(Icons.warning_amber, 'Active Alarms', '${alarmsState.alarms.length}', 'Current', alarmsState.alarms.isNotEmpty ? const Color(0xFFF44336) : const Color(0xFF4CAF50), () => context.go('/alarms')),
-              _statCard(Icons.water_drop, 'Flow Rate', '0.0', 'm3/h', const Color(0xFF2196F3), () => context.go('/flow')),
-              _statCard(Icons.wb_sunny, 'Weather', '--', 'C', const Color(0xFFFF9800), () => context.go('/weather')),
-            ],
-          ),
+          if (dashboardState.isLoading)
+            const Center(child: Padding(
+              padding: EdgeInsets.all(40),
+              child: CircularProgressIndicator(color: Color(0xFF1B5E20)),
+            ))
+          else ...[
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.4,
+              children: [
+                _statCard(Icons.settings_input_antenna, 'Controllers', '${dashboardState.controllers.length}', 'Active', const Color(0xFF4CAF50), () => context.go('/controllers')),
+                _statCard(Icons.warning_amber, 'Active Alarms', '${dashboardState.activeAlarms}', 'Current', dashboardState.activeAlarms > 0 ? const Color(0xFFF44336) : const Color(0xFF4CAF50), () => context.go('/alarms')),
+                _statCard(Icons.tag, 'Total Tags', '${dashboardState.totalTags}', 'Registered', const Color(0xFF2196F3), () => context.go('/controllers')),
+                _statCard(Icons.view_list, 'Views', '3', 'Available', const Color(0xFFFF9800), () => context.go('/reports')),
+              ],
+            ),
+          ],
           const SizedBox(height: 20),
           _sectionHeader('Quick Actions'),
           const SizedBox(height: 8),
@@ -95,17 +103,44 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             ],
           ),
           const SizedBox(height: 20),
+          if (controllersState.controllers.isNotEmpty) ...[
+            _sectionHeader('Controllers'),
+            const SizedBox(height: 8),
+            ...controllersState.controllers.map((c) => Card(
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF1B5E20).withOpacity(0.1),
+                  child: const Icon(Icons.settings_input_antenna, color: Color(0xFF1B5E20)),
+                ),
+                title: Text('${c.name} (${c.displayName})'),
+                subtitle: Text('${c.tagCount} tags'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.go('/controllers'),
+              ),
+            )),
+          ],
+          const SizedBox(height: 20),
           if (alarmsState.alarms.isNotEmpty) ...[
-            _sectionHeader('Recent Alarms'),
+            _sectionHeader('Recent Alarms (${alarmsState.alarms.length})'),
             const SizedBox(height: 8),
             ...alarmsState.alarms.take(5).map((a) => Card(
               child: ListTile(
-                leading: Icon(Icons.warning, color: a.priority >= 4 ? Colors.red : Colors.orange),
-                title: Text(a.message),
-                subtitle: Text(a.timestamp),
+                leading: Icon(Icons.warning, color: a.priority >= 4 ? Colors.red : a.priority >= 2 ? Colors.orange : Colors.amber),
+                title: Text(a.message, maxLines: 1, overflow: TextOverflow.ellipsis),
+                subtitle: Text('${a.controllerName} - ${a.timestamp}'),
                 trailing: Text('P${a.priority}', style: TextStyle(color: a.priority >= 4 ? Colors.red : Colors.orange, fontWeight: FontWeight.bold)),
               ),
             )),
+            if (alarmsState.alarms.length > 5)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () => context.go('/alarms'),
+                    child: const Text('View All Alarms'),
+                  ),
+                ),
+              ),
           ],
         ],
       ),

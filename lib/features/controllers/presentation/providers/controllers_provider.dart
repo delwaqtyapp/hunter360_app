@@ -6,22 +6,22 @@ import 'package:hunter360_app/core/network/api_client.dart';
 class IrrigationController {
   final String id;
   final String name;
+  final String displayName;
   final String type;
   final String status;
   final int activeValves;
   final int totalValves;
-  final double? latitude;
-  final double? longitude;
+  final int tagCount;
 
   const IrrigationController({
     required this.id,
     required this.name,
-    this.type = 'ACC2',
+    this.displayName = '',
+    this.type = 'Controller',
     this.status = 'online',
     this.activeValves = 0,
     this.totalValves = 0,
-    this.latitude,
-    this.longitude,
+    this.tagCount = 0,
   });
 }
 
@@ -54,6 +54,12 @@ class ControllersState {
 class ControllersNotifier extends StateNotifier<ControllersState> {
   final ApiClient _apiClient;
 
+  static const _controllerNames = {
+    'C001': 'Lanova',
+    'C002': 'CBP',
+    'C003': 'KAI',
+  };
+
   ControllersNotifier(this._apiClient) : super(const ControllersState());
 
   Future<void> loadControllers() async {
@@ -61,33 +67,42 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
     try {
       final response = await _apiClient.get(ApiConstants.tagsList);
       final data = response.data;
-      final List tags = data is List ? data : (data['Tags'] ?? data['Data'] ?? []);
+      final Map<String, dynamic> tagsMap = Map<String, dynamic>.from(data is Map ? data : {});
+      final List tags = (tagsMap['Tags'] ?? tagsMap['Data'] ?? []) as List;
       final controllerMap = <String, IrrigationController>{};
 
       for (final tag in tags) {
-        final name = tag['TagName']?.toString() ?? '';
-        final parts = name.split('.');
-        if (parts.length >= 2) {
-          final controllerName = parts[0];
-          if (!controllerMap.containsKey(controllerName)) {
-            controllerMap[controllerName] = IrrigationController(
-              id: controllerName,
-              name: controllerName,
-              type: controllerName.startsWith('ACC') ? 'ACC2' : 'ICC2',
-              status: 'online',
-            );
-          }
+        final tagMap = Map<String, dynamic>.from(tag is Map ? tag : {});
+        final group = tagMap['Group']?.toString() ?? '';
+        if (group.isEmpty) continue;
+
+        if (!controllerMap.containsKey(group)) {
+          final displayName = _controllerNames[group] ?? group;
+          controllerMap[group] = IrrigationController(
+            id: group,
+            name: group,
+            displayName: displayName,
+            type: group,
+            tagCount: 0,
+          );
         }
+        final existing = controllerMap[group]!;
+        controllerMap[group] = IrrigationController(
+          id: existing.id,
+          name: existing.name,
+          displayName: existing.displayName,
+          type: existing.type,
+          status: existing.status,
+          tagCount: existing.tagCount + 1,
+        );
       }
 
       state = state.copyWith(controllers: controllerMap.values.toList(), isLoading: false);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        controllers: [
-          const IrrigationController(id: 'ACC2-01', name: 'ACC2-01', type: 'ACC2', status: 'online', activeValves: 8, totalValves: 16),
-          const IrrigationController(id: 'ICC2-01', name: 'ICC2-01', type: 'ICC2', status: 'online', activeValves: 4, totalValves: 8),
-        ],
+        error: e.toString(),
+        controllers: [],
       );
     }
   }
@@ -97,17 +112,21 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
     try {
       final response = await _apiClient.get(ApiConstants.tagsList);
       final data = response.data;
-      final List tags = data is List ? data : (data['Tags'] ?? data['Data'] ?? []);
+      final Map<String, dynamic> tagsMap = Map<String, dynamic>.from(data is Map ? data : {});
+      final List tags = (tagsMap['Tags'] ?? tagsMap['Data'] ?? []) as List;
       final valves = <Valve>[];
       int stationNum = 1;
 
       for (final tag in tags) {
-        final name = tag['TagName']?.toString() ?? '';
-        if (name.startsWith('$controllerId.')) {
+        final tagMap = Map<String, dynamic>.from(tag is Map ? tag : {});
+        final name = tagMap['Name']?.toString() ?? tagMap['TagName']?.toString() ?? '';
+        final group = tagMap['Group']?.toString() ?? '';
+
+        if (group == controllerId && name.toLowerCase().contains('station')) {
           valves.add(Valve(
             id: name,
             stationNumber: stationNum++,
-            name: name.split('.').skip(1).join('.'),
+            name: name.split('.').last,
             status: 'closed',
           ));
         }
@@ -117,7 +136,8 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        valves: List.generate(8, (i) => Valve(id: 'v$i', stationNumber: i + 1, name: 'Zone ${i + 1}', status: 'closed')),
+        valves: [],
+        error: e.toString(),
       );
     }
   }

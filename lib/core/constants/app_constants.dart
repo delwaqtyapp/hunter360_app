@@ -17,7 +17,7 @@ class AppConstants {
 
   static String get defaultServerUrl {
     if (kIsWeb) return '';
-    return 'http://localhost:49110';
+    return 'http://10.10.8.60:49110';
   }
 
   static const String mqttBroker = 'localhost';
