@@ -9,8 +9,6 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
-
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next.status == AuthStatus.authenticated) {
         context.go('/');

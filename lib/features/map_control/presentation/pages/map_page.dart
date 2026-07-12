@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../domain/entities/map_marker.dart';
 import '../providers/map_provider.dart';
 import '../widgets/marker_info_window.dart';
 

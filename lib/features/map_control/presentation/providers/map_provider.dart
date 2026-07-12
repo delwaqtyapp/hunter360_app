@@ -16,6 +16,18 @@ class MapState {
     if (filter == 'all') return markers;
     return markers.where((m) => m.status == filter).toList();
   }
+
+  MapState copyWith({
+    List<MapMarker>? markers,
+    String? filter,
+    bool? isLoading,
+  }) {
+    return MapState(
+      markers: markers ?? this.markers,
+      filter: filter ?? this.filter,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
 }
 
 class MapNotifier extends StateNotifier<MapState> {

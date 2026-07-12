@@ -15,10 +15,8 @@ class ConnectivityService {
   Stream<ConnectivityStatus> get stream => _controller.stream;
 
   ConnectivityService() {
-    _connectivity.onConnectivityChanged.listen((results) {
-      for (final result in results) {
-        _controller.add(_mapConnectivityResult(result));
-      }
+    _connectivity.onConnectivityChanged.listen((result) {
+      _controller.add(_mapConnectivityResult(result));
     });
   }
 
@@ -36,8 +34,8 @@ class ConnectivityService {
   }
 
   Future<ConnectivityStatus> checkConnectivity() async {
-    final results = await _connectivity.checkConnectivity();
-    return _mapConnectivityResult(results.first);
+    final result = await _connectivity.checkConnectivity();
+    return _mapConnectivityResult(result);
   }
 
   void dispose() {
