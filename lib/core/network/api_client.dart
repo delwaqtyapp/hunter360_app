@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/constants/app_constants.dart';
@@ -10,8 +11,7 @@ final dioProvider = Provider<Dio>((ref) {
     connectTimeout: const Duration(seconds: 30),
     receiveTimeout: const Duration(seconds: 30),
     headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      'Accept': 'application/json, text/plain, */*',
     },
   ));
 
@@ -21,6 +21,7 @@ final dioProvider = Provider<Dio>((ref) {
       if (token.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $token';
       }
+      // Don't force Content-Type - let each request set it
       handler.next(options);
     },
     onResponse: (response, handler) {
@@ -52,7 +53,10 @@ class ApiClient {
 
   Future<Response> post(String path, {dynamic data, String? contentType}) async {
     try {
-      return await _dio.post(path, data: data, options: contentType != null ? Options(contentType: contentType) : null);
+      final options = contentType != null
+          ? Options(contentType: contentType)
+          : null;
+      return await _dio.post(path, data: data, options: options);
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -79,16 +83,25 @@ class ApiClient {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return TimeoutException('Connection timed out');
+        return TimeoutException('Connection timed out: ${e.message}');
       case DioExceptionType.badResponse:
-        return ServerException(
-          message: e.response?.data?['message'] ?? 'Server error',
-          statusCode: e.response?.statusCode,
-        );
+        final statusCode = e.response?.statusCode;
+        final body = e.response?.data;
+        String msg = 'Server error ($statusCode)';
+        if (body != null) {
+          if (body is String) {
+            msg = body;
+          } else if (body is Map) {
+            msg = body['message']?.toString() ?? body['error']?.toString() ?? msg;
+          }
+        }
+        return ServerException(message: msg, statusCode: statusCode);
       case DioExceptionType.cancel:
         return ServerException(message: 'Request cancelled');
+      case DioExceptionType.connectionError:
+        return NetworkException(message: 'Cannot connect to server. Check server URL and VPN connection.');
       default:
-        return NetworkException(message: 'Network error');
+        return NetworkException(message: 'Network error: ${e.message}');
     }
   }
 }

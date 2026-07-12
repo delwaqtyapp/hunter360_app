@@ -54,7 +54,35 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         context.go('/');
       } else if (next.status == AuthStatus.error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error ?? 'Login failed'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(next.error ?? 'Login failed'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Details',
+              textColor: Colors.white,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Login Error Details'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Server: ${_serverUrlController.text}'),
+                        const SizedBox(height: 8),
+                        Text('Error: ${next.error}'),
+                        const SizedBox(height: 8),
+                        Text('Raw: ${next.rawResponse ?? "none"}'),
+                      ],
+                    ),
+                    actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
+                  ),
+                );
+              },
+            ),
+          ),
         );
       }
     });
