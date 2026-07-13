@@ -16,7 +16,6 @@ class _OperationCommandsPageState extends ConsumerState<OperationCommandsPage> {
   String _deviceType = '1';
   String _selectedStation = '';
   final _durationController = TextEditingController();
-  String _duration = '';
 
   @override
   void initState() {
@@ -121,7 +120,7 @@ class _OperationCommandsPageState extends ConsumerState<OperationCommandsPage> {
             isDense: true,
           ),
           keyboardType: TextInputType.number,
-          onChanged: (v) => _duration = v,
+          onChanged: (_) {},
         ),
         const SizedBox(height: 18),
 

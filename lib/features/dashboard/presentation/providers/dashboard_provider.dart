@@ -75,6 +75,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   final ApiClient _apiClient;
   final RealtimeService _realtimeService;
   StreamSubscription? _subscription;
+  void Function(bool)? _onServerConnected;
 
   static const _controllerNames = {'C001': 'Lanova', 'C002': 'CBP', 'C003': 'KAI'};
 
@@ -184,8 +185,11 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         totalTags: tags.length,
         activeAlarms: activeAlarms,
       );
+      // Server is reachable
+      _onServerConnected?.call(true);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
+      _onServerConnected?.call(false);
     }
   }
 
@@ -198,5 +202,9 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 }
 
 final dashboardProvider = StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
-  return DashboardNotifier(ref.read(apiClientProvider), ref.read(realtimeServiceProvider));
+  final notifier = DashboardNotifier(ref.read(apiClientProvider), ref.read(realtimeServiceProvider));
+  notifier._onServerConnected = (connected) {
+    ref.read(isServerConnectedProvider.notifier).state = connected;
+  };
+  return notifier;
 });

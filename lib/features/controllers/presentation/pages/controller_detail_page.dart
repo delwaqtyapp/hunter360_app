@@ -596,8 +596,8 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
         final ip = liveData['$prefix.ControllerInfo.IP']?.scaledValue ?? '-';
         final dateTime = liveData['$prefix.ControllerInfo.DateTime']?.scaledValue ?? '-';
         final masterMode = liveData['$prefix.ControllerInfo.MasterMode']?.scaledValue ?? '-';
-        final isOnline = liveData['$prefix.Status']?.scaledValue?.toLowerCase() != 'offline' &&
-            (liveData['$prefix.Status']?.scaledValue ?? '').isNotEmpty;
+        final statusVal = liveData['$prefix.Status']?.scaledValue;
+        final isOnline = statusVal != null && statusVal.toLowerCase() != 'offline' && statusVal.isNotEmpty;
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),

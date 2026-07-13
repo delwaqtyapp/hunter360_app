@@ -297,7 +297,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 5),
       ));
-      final response = await testDio.get(url);
+      await testDio.get(url);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

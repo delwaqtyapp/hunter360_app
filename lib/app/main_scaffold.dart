@@ -32,7 +32,7 @@ class MainScaffold extends ConsumerWidget {
     final alarmsState = ref.watch(alarmsProvider);
 
     return Scaffold(
-      appBar: _SCADAAppBar(l10n: l10n, isDark: isDark, serverUrl: serverUrl, alarmCount: alarmsState.alarms.length),
+      appBar: _SCADAAppBar(l10n: l10n, isDark: isDark, serverUrl: serverUrl, alarmCount: alarmsState.alarms.length, isConnected: ref.watch(isServerConnectedProvider)),
       drawer: _SCADADrawer(l10n: l10n, ref: ref, isDark: isDark, serverUrl: serverUrl),
       body: child,
       bottomNavigationBar: _SCADABottomNav(
@@ -53,12 +53,14 @@ class _SCADAAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isDark;
   final String serverUrl;
   final int alarmCount;
+  final bool isConnected;
 
   const _SCADAAppBar({
     required this.l10n,
     required this.isDark,
     required this.serverUrl,
     required this.alarmCount,
+    required this.isConnected,
   });
 
   @override
@@ -147,10 +149,10 @@ class _SCADAAppBar extends StatelessWidget implements PreferredSizeWidget {
                       height: 7,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: serverUrl.isNotEmpty ? AppTheme.successColor : AppTheme.errorColor,
+                        color: isConnected ? AppTheme.successColor : AppTheme.errorColor,
                         boxShadow: [
                           BoxShadow(
-                            color: (serverUrl.isNotEmpty
+                            color: (isConnected
                                     ? AppTheme.successColor
                                     : AppTheme.errorColor)
                                 .withOpacity(0.6),
@@ -161,7 +163,7 @@ class _SCADAAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      serverUrl.isNotEmpty
+                      isConnected
                           ? l10n.connectedToServerStatus
                           : l10n.notConnectedToServerStatus,
                       style: TextStyle(

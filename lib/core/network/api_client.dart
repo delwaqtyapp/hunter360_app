@@ -36,6 +36,7 @@ final dioProvider = Provider<Dio>((ref) {
 
 final authTokenProvider = StateProvider<String>((ref) => '');
 final serverUrlProvider = StateProvider<String>((ref) => AppConstants.defaultServerUrl);
+final isServerConnectedProvider = StateProvider<bool>((ref) => false);
 
 class ApiClient {
   final Dio _dio;

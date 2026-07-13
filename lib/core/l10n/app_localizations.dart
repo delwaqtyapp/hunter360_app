@@ -229,6 +229,9 @@ class AppLocalizations {
 
   // --- Controllers Extended ---
   String get noControllersFound => isArabic ? 'لا توجد وحدات تحكم' : 'No controllers found';
+  String get noControllers => isArabic ? 'لا توجد وحدات تحكم متصلة' : 'No controllers connected';
+  String get noFlowData => isArabic ? 'لا توجد بيانات تدفق' : 'No flow data available';
+  String get noActiveAlarms => isArabic ? 'لا توجد إنذارات نشطة' : 'No active alarms';
   String get tapToViewDetails => isArabic ? 'اضغط لعرض التفاصيل' : 'Tap to view details';
   String get stationsTab => isArabic ? 'المحطات' : 'Stations';
   String get blocksTab => isArabic ? 'البلوكات' : 'Blocks';

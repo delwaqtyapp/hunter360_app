@@ -271,7 +271,39 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
   }
 
   Widget _buildControllerCards(AppLocalizations l10n, ControllersState controllersState, DashboardState dashState) {
-    if (controllersState.controllers.isEmpty) return const SizedBox.shrink();
+    if (controllersState.controllers.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _sectionHeader(l10n.projectControllers),
+            const SizedBox(height: 8),
+            Container(
+              height: 130,
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D2137),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.08)),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.settings_input_antenna, color: Colors.white.withOpacity(0.2), size: 32),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.noControllers,
+                      style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -372,7 +404,45 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
 
   Widget _buildFlowMetersSection(AppLocalizations l10n, DashboardState dashState) {
     final sensors = dashState.flowSensors;
-    if (sensors.isEmpty) return const SizedBox.shrink();
+    if (sensors.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.speed, size: 16, color: Color(0xFF00E676)),
+                const SizedBox(width: 6),
+                _sectionHeader(l10n.flowMeters),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D2137),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.08)),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.speed, color: Colors.white.withOpacity(0.2), size: 28),
+                    const SizedBox(height: 6),
+                    Text(
+                      l10n.noFlowData,
+                      style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     final sensorList = sensors.entries.toList();
 
@@ -495,7 +565,43 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
   }
 
   Widget _buildRecentAlarms(AppLocalizations l10n, AlarmsState alarmsState) {
-    if (alarmsState.alarms.isEmpty) return const SizedBox.shrink();
+    if (alarmsState.alarms.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.warning_amber, size: 16, color: Color(0xFFFF9800)),
+                const SizedBox(width: 6),
+                _sectionHeader(l10n.recentAlarms),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D2137),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.08)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.check_circle_outline, color: AppTheme.successColor.withOpacity(0.5), size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.noActiveAlarms,
+                    style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.all(12),
