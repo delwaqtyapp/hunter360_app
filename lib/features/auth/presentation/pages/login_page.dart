@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
@@ -33,8 +34,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _checkLicense() async {
     final prefs = await SharedPreferences.getInstance();
-    final license = prefs.getString('LicenseData');
-    if (license != null) {
+    var license = prefs.getString('LicenseData');
+    if (license == null || license.isEmpty) {
+      try {
+        final bd = await rootBundle.load('assets/lic_out.lic');
+        license = String.fromCharCodes(bd.buffer.asUint8List());
+        await prefs.setString('LicenseData', license);
+      } catch (_) {}
+    }
+    if (license != null && license.isNotEmpty) {
       try {
         final data = jsonDecode(license);
         setState(() {

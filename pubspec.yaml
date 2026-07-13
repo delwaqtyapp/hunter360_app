@@ -87,3 +87,4 @@ flutter:
     - assets/images/
     - assets/images/logo_hunter.svg
     - assets/translations/
+    - assets/lic_out.lic
