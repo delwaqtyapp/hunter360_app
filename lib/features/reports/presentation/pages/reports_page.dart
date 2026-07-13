@@ -634,7 +634,15 @@ class _ReportsPageState extends ConsumerState<ReportsPage>
 
   Widget _buildExportButton(String label, IconData icon, Color color) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        final isPdf = label.toLowerCase().contains('pdf');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isPdf ? 'PDF export coming soon' : 'CSV export coming soon'),
+            backgroundColor: color,
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(

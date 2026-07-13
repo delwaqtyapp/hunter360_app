@@ -15,11 +15,19 @@ class OperationCommandsPage extends ConsumerStatefulWidget {
 class _OperationCommandsPageState extends ConsumerState<OperationCommandsPage> {
   String _deviceType = '1';
   String _selectedStation = '';
+  final _durationController = TextEditingController();
+  String _duration = '';
 
   @override
   void initState() {
     super.initState();
     Future.microtask(() => ref.read(scadaProvider.notifier).initialize());
+  }
+
+  @override
+  void dispose() {
+    _durationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -106,12 +114,14 @@ class _OperationCommandsPageState extends ConsumerState<OperationCommandsPage> {
 
         // --- Duration ---
         TextField(
+          controller: _durationController,
           decoration: InputDecoration(
             labelText: l10n.durationMinutes,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             isDense: true,
           ),
           keyboardType: TextInputType.number,
+          onChanged: (v) => _duration = v,
         ),
         const SizedBox(height: 18),
 

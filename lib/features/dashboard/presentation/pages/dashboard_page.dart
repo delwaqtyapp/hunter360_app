@@ -84,8 +84,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        l10n.serverUnavailable,
-                        style: const TextStyle(color: AppTheme.errorColor, fontSize: 12, fontWeight: FontWeight.w500),
+                        dashState.error!.contains('Exception')
+                            ? l10n.serverUnavailable
+                            : dashState.error!,
+                        style: const TextStyle(color: AppTheme.errorColor, fontSize: 11, fontWeight: FontWeight.w500),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     GestureDetector(
@@ -297,7 +301,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
 
   Widget _controllerCard(AppLocalizations l10n, String id, String name, int tags, bool irrigating, bool hasAlarm) {
     return GestureDetector(
-      onTap: () => context.go('/controllers'),
+      onTap: () => context.go('/controllers/$id'),
       child: Container(
         width: 200,
         padding: const EdgeInsets.all(12),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -292,8 +293,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     setState(() => _testingConnection = true);
     try {
       final url = _serverController.text.trim();
-      final dio = ref.read(dioProvider);
-      final response = await dio.get(url).timeout(const Duration(seconds: 5));
+      final testDio = Dio(BaseOptions(
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+      ));
+      final response = await testDio.get(url);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -305,13 +309,22 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         );
       }
     } catch (e) {
+      String msg = e.toString();
+      if (msg.contains('Connection refused')) {
+        msg = 'Connection refused - is the server running on this IP?';
+      } else if (msg.contains('Connection timed out') || msg.contains('timeout')) {
+        msg = 'Connection timed out - check VPN and server IP';
+      } else if (msg.contains('SocketException')) {
+        msg = 'Cannot reach server - check VPN connection';
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppLocalizations.of(context).connectionFailed}: ${e.toString().substring(0, e.toString().length.clamp(0, 80))}'),
+            content: Text('${AppLocalizations.of(context).connectionFailed}: $msg'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            duration: const Duration(seconds: 5),
           ),
         );
       }

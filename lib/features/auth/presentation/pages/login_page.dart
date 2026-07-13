@@ -248,13 +248,13 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
                       'SCADA',
                       style: TextStyle(
                         color: AppTheme.secondaryColor,
-                        fontSize: 44,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 3,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 4,
                         shadows: [
                           Shadow(
-                            color: AppTheme.secondaryColor.withOpacity(0.4),
-                            blurRadius: 20,
+                            color: AppTheme.secondaryColor.withOpacity(0.3),
+                            blurRadius: 12,
                           ),
                         ],
                       ),

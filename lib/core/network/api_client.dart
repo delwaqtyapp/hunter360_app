@@ -111,5 +111,5 @@ class TimeoutException implements Exception {
 }
 
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(ref.read(dioProvider));
+  return ApiClient(ref.watch(dioProvider));
 });

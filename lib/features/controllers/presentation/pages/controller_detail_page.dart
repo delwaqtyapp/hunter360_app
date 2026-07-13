@@ -2,8 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/l10n/app_localizations.dart';
+import 'package:hunter360_app/core/constants/api_constants.dart';
 import 'package:hunter360_app/core/constants/app_constants.dart';
+import 'package:hunter360_app/core/network/api_client.dart';
 import 'package:hunter360_app/core/services/realtime_service.dart';
+import 'package:hunter360_app/features/alarms/presentation/providers/alarms_provider.dart';
 import '../providers/controllers_provider.dart';
 
 class ControllerDetailPage extends ConsumerStatefulWidget {
@@ -370,16 +373,74 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
   }
 
   Widget _buildAlarmsTab(AppLocalizations l10n) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.warning_amber_rounded, size: 80, color: Colors.grey.shade200),
-          const SizedBox(height: 16),
-          Text(l10n.noAlarms, style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
-          const SizedBox(height: 8),
-          Text('${l10n.alarmsTab} - ${widget.controllerId}', style: TextStyle(fontSize: 13, color: Colors.grey.shade400)),
-        ],
+    final alarmsState = ref.watch(alarmsProvider);
+
+    if (alarmsState.alarms.isEmpty && !alarmsState.isLoading && alarmsState.error == null) {
+      Future.microtask(() {
+        ref.read(alarmsProvider.notifier).loadAlarms();
+        ref.read(alarmsProvider.notifier).setControllerFilter(widget.controllerId);
+      });
+    }
+
+    final controllerAlarms = alarmsState.filteredAlarms;
+
+    if (alarmsState.isLoading) {
+      return const Center(child: CircularProgressIndicator(color: Color(0xFF156082)));
+    }
+
+    if (alarmsState.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.red.shade200),
+            const SizedBox(height: 16),
+            Text(l10n.error, style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
+            const SizedBox(height: 8),
+            ElevatedButton(onPressed: () => ref.read(alarmsProvider.notifier).loadAlarms(), child: Text(l10n.retry)),
+          ],
+        ),
+      );
+    }
+
+    if (controllerAlarms.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.warning_amber_rounded, size: 80, color: Colors.grey.shade200),
+            const SizedBox(height: 16),
+            Text(l10n.noAlarms, style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
+            const SizedBox(height: 8),
+            Text('${l10n.alarmsTab} - ${widget.controllerId}', style: TextStyle(fontSize: 13, color: Colors.grey.shade400)),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => ref.read(alarmsProvider.notifier).loadAlarms(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: controllerAlarms.length,
+        itemBuilder: (context, index) {
+          final alarm = controllerAlarms[index];
+          final priorityColor = alarm.isCritical ? Colors.red : alarm.isWarning ? Colors.orange : Colors.blue;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: ListTile(
+              leading: Icon(Icons.warning_amber_rounded, color: priorityColor, size: 28),
+              title: Text(alarm.alarmComment.isNotEmpty ? alarm.alarmComment : alarm.tagName,
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              subtitle: Text('${alarm.alarmTime}  •  ${alarm.alarmType}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+              trailing: alarm.isAcknowledged
+                  ? Icon(Icons.check_circle, color: Colors.green.shade400, size: 20)
+                  : Icon(Icons.error, color: priorityColor, size: 20),
+            ),
+          );
+        },
       ),
     );
   }
@@ -410,11 +471,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('${l10n.commandSent}: ${l10n.start}'), backgroundColor: const Color(0xFF4CAF50)),
-                            );
-                          },
+                          onPressed: () => _confirmAndSendCommand(l10n.start, '1'),
                           icon: const Icon(Icons.play_arrow, size: 20),
                           label: Text(l10n.start),
                           style: ElevatedButton.styleFrom(
@@ -428,11 +485,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                       const SizedBox(width: 12),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('${l10n.commandSent}: ${l10n.stop}'), backgroundColor: Colors.red),
-                            );
-                          },
+                          onPressed: () => _confirmAndSendCommand(l10n.stop, '0'),
                           icon: const Icon(Icons.stop, size: 20),
                           label: Text(l10n.stop),
                           style: ElevatedButton.styleFrom(
@@ -490,6 +543,43 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
         ],
       ),
     );
+  }
+
+  Future<void> _confirmAndSendCommand(String actionLabel, String value) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.confirm),
+        content: Text('$actionLabel ${widget.controllerId}?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.confirm)),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final apiClient = ref.read(apiClientProvider);
+    try {
+      final tag = '${widget.controllerId}.StartSingleManualEvent_DeviceType_Command';
+      await apiClient.post(
+        ApiConstants.tagsWrite,
+        data: [{'TagName': tag, 'RawValue': value}],
+        contentType: 'application/json',
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.commandSent}: $actionLabel'), backgroundColor: const Color(0xFF4CAF50)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.error}: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   // --- NEW: Info Tab ---

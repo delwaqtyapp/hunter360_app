@@ -16,6 +16,8 @@ class _FlowPageState extends ConsumerState<FlowPage> {
   String _selectedController = '';
   List<FlSpot> _flowData = [];
   int _selectedZoneTab = 0;
+  String _minThreshold = '';
+  String _maxThreshold = '';
 
   @override
   void initState() {
@@ -1073,6 +1075,7 @@ class _FlowPageState extends ConsumerState<FlowPage> {
                             suffixText: 'L/min',
                             suffixStyle: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
+                          onChanged: (v) => _minThreshold = v,
                         ),
                       ),
                     ],
@@ -1099,6 +1102,7 @@ class _FlowPageState extends ConsumerState<FlowPage> {
                             suffixText: 'L/min',
                             suffixStyle: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
+                          onChanged: (v) => _maxThreshold = v,
                         ),
                       ),
                     ],
@@ -1110,7 +1114,19 @@ class _FlowPageState extends ConsumerState<FlowPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  final minVal = double.tryParse(_minThreshold);
+                  final maxVal = double.tryParse(_maxThreshold);
+                  if (minVal != null && maxVal != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Thresholds saved: Min ${minVal.toStringAsFixed(1)} L/min, Max ${maxVal.toStringAsFixed(1)} L/min'), backgroundColor: Colors.green),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please enter valid min and max thresholds'), backgroundColor: Colors.orange),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF156082),
                   padding: const EdgeInsets.symmetric(vertical: 12),

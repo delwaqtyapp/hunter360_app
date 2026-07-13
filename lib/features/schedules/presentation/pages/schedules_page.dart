@@ -348,7 +348,9 @@ class _SchedulesPageState extends ConsumerState<SchedulesPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/schedules/editor', arguments: schedule.id);
+                        },
                         icon: const Icon(Icons.edit, size: 18),
                         label: Text(localizations.edit),
                       ),
