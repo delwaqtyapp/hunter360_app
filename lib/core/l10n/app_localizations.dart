@@ -61,6 +61,15 @@ class AppLocalizations {
   String get status => isArabic ? 'الحالة' : 'Status';
   String get viewAll => isArabic ? 'عرض الكل' : 'View All';
   String get projectControllers => isArabic ? 'كنترولات المشروع' : 'Project Controllers';
+  String get runningStations => isArabic ? 'المحطات العاملة' : 'Running Stations';
+  String get controllersOnline => isArabic ? 'كنترولات متصلة' : 'Controllers Online';
+  String get systemStatus => isArabic ? 'حالة النظام' : 'System Status';
+  String get liveFlowMeters => isArabic ? 'عدادات التدفق المباشرة' : 'Live Flow Meters';
+  String get totalFlow => isArabic ? 'إجمالي التدفق' : 'Total Flow';
+  String get notIrrigatingLabel => isArabic ? 'غير مروي' : 'Not Irrigating';
+  String get normalLabel => isArabic ? 'طبيعي' : 'Normal';
+  String get highLabel => isArabic ? 'مرتفع' : 'High';
+  String get lowLabel => isArabic ? 'منخفض' : 'Low';
 
   // --- Controller Status ---
   String get controllerOnline => isArabic ? 'كنترولر متصل' : 'Controller Online';
@@ -117,6 +126,21 @@ class AppLocalizations {
   String get info => isArabic ? 'معلومات' : 'Info';
   String get noAlarms => isArabic ? 'لا توجد إنذارات' : 'No alarms';
   String get irrigatingStatus => isArabic ? 'حالة الري' : 'Irrigation Status';
+
+  // --- UI Modernization ---
+  String get mainSection => isArabic ? 'الرئيسية' : 'MAIN';
+  String get irrigationSection => isArabic ? 'الري' : 'IRRIGATION';
+  String get monitoringSection => isArabic ? 'المراقبة' : 'MONITORING';
+  String get systemSection => isArabic ? 'النظام' : 'SYSTEM';
+  String get connectedToServerStatus => isArabic ? 'متصل' : 'Connected';
+  String get notConnectedToServerStatus => isArabic ? 'غير متصل' : 'Offline';
+  String get tapToConfigure => isArabic ? 'اضغط للإعداد' : 'Tap to configure';
+  String get forgotPassword => isArabic ? 'نسيت كلمة المرور؟' : 'Forgot password?';
+  String get rememberMe => isArabic ? 'تذكرني' : 'Remember me';
+  String get welcomeBack => isArabic ? 'مرحباً بعودتك' : 'Welcome Back';
+  String get loginToContinue => isArabic ? 'سجّل دخولك للمتابعة' : 'Sign in to continue';
+  String get trends => isArabic ? 'المنحنى' : 'Trends';
+  String get trendLabel => isArabic ? 'المنحنى' : 'Trends';
 
   // --- Alarms ---
   String get searchAlarms => isArabic ? 'بحث في الإنذارات...' : 'Search alarms...';
@@ -181,6 +205,26 @@ class AppLocalizations {
   String get versionLabel => isArabic ? 'الإصدار' : 'Version';
   String get licensedToLabel => isArabic ? 'مرخص لـ' : 'Licensed to';
   String get companyName => isArabic ? 'عبقرينو تكنولوجى' : 'Abqarino Technology';
+  String get testConnection => isArabic ? 'اختبار الاتصال' : 'Test Connection';
+  String get connectionSuccess => isArabic ? 'تم الاتصال بنجاح' : 'Connection successful';
+  String get connectionFailed => isArabic ? 'فشل الاتصال' : 'Connection failed';
+  String get autoLogoutDisabled => isArabic ? 'معطل' : 'Disabled';
+  String get autoLogoutDialog => isArabic ? 'تسجيل الخروج التلقائي' : 'Auto Logout';
+  String get selectMinutes => isArabic ? 'اختر عدد الدقائق' : 'Select minutes';
+  String get disabled => isArabic ? 'معطل' : 'Disabled';
+  String get exportData => isArabic ? 'تصدير البيانات' : 'Export Data';
+  String get clearCache => isArabic ? 'مسح الكاش' : 'Clear Cache';
+  String get cacheCleared => isArabic ? 'تم مسح الكاش' : 'Cache cleared';
+  String get resetToDefaults => isArabic ? 'إعادة الضبط الافتراضي' : 'Reset to Defaults';
+  String get resetConfirm => isArabic ? 'هل أنت متأكد من إعادة جميع الإعدادات للقيمة الافتراضية؟' : 'Are you sure you want to reset all settings to defaults?';
+  String get settingsReset => isArabic ? 'تم إعادة الضبط' : 'Settings reset';
+  String get requiresRestart => isArabic ? 'قد يتطلب إعادة تشغيل التطبيق' : 'App restart may be required';
+  String get serverUrlLabel => isArabic ? 'رابط السيرفر' : 'Server URL';
+  String get deviceInfo => isArabic ? 'معلومات الجهاز' : 'Device Info';
+  String get notificationsEnabledLabel => isArabic ? 'مفعل' : 'Enabled';
+  String get notificationsDisabledLabel => isArabic ? 'معطل' : 'Disabled';
+  String get settingsSection => isArabic ? 'الإعدادات' : 'Settings';
+  String get dangerZone => isArabic ? 'منطقة الخطر' : 'Danger Zone';
 
   // --- Controllers Extended ---
   String get noControllersFound => isArabic ? 'لا توجد وحدات تحكم' : 'No controllers found';
@@ -363,7 +407,6 @@ class AppLocalizations {
   String get currentDraw => isArabic ? 'التيار الكهربائي' : 'Current Draw';
   String get overloadStatus => isArabic ? 'حالة الحمل الزائد' : 'Overload Status';
   String get pathStatus => isArabic ? 'حالة المسار' : 'Path Status';
-  String get systemStatus => isArabic ? 'حالة النظام' : 'System Status';
   String get shutdownStatus => isArabic ? 'حالة الإيقاف' : 'Shutdown';
   String get daysOffStatus => isArabic ? 'أيام الإيقاف' : 'Days Off';
   String get suspendStatus => isArabic ? 'حالة التعليق' : 'Suspend/Pause';
@@ -373,7 +416,6 @@ class AppLocalizations {
   String get lastCommunication => isArabic ? 'آخر اتصال ناجح' : 'Last Communication';
   String get retryCount => isArabic ? 'عدد المحاولات' : 'Retry Count';
   String get module => isArabic ? 'وحدة' : 'Module';
-  String get normalLabel => isArabic ? 'طبيعي' : 'Normal';
   String get activeLabel => isArabic ? 'نشط' : 'Active';
   String get noneLabel => isArabic ? 'لا يوجد' : 'None';
 

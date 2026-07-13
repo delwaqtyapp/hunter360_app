@@ -5,7 +5,7 @@ import 'app/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences.getInstance();
+  await SharedPreferences.getInstance();
   runApp(
     const ProviderScope(
       child: Hunter360App(),
