@@ -133,8 +133,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               child: ListTile(
                 dense: true,
                 leading: Icon(Icons.warning, color: a.priority >= 4 ? Colors.red : a.priority >= 2 ? Colors.orange : Colors.amber, size: 20),
-                title: Text(a.message, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)),
-                subtitle: Text('${a.controllerName} - ${a.timestamp}', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+                title: Text(a.alarmComment.isNotEmpty ? a.alarmComment : a.tagName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)),
+                subtitle: Text('${a.userDef3.isNotEmpty ? a.userDef3 : a.tagGroup} - ${a.alarmTime}', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
                 trailing: Text('P${a.priority}', style: TextStyle(color: a.priority >= 4 ? Colors.red : Colors.orange, fontWeight: FontWeight.bold, fontSize: 12)),
               ),
             )),

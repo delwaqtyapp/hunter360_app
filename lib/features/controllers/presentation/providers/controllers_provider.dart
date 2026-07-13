@@ -28,6 +28,8 @@ class IrrigationController {
 class ControllersState {
   final List<IrrigationController> controllers;
   final List<Valve> valves;
+  final List<Map<String, dynamic>> stationTags;
+  final List<Map<String, dynamic>> blockTags;
   final String? selectedControllerId;
   final bool isLoading;
   final String? error;
@@ -35,15 +37,27 @@ class ControllersState {
   const ControllersState({
     this.controllers = const [],
     this.valves = const [],
+    this.stationTags = const [],
+    this.blockTags = const [],
     this.selectedControllerId,
     this.isLoading = false,
     this.error,
   });
 
-  ControllersState copyWith({List<IrrigationController>? controllers, List<Valve>? valves, String? selectedControllerId, bool? isLoading, String? error}) {
+  ControllersState copyWith({
+    List<IrrigationController>? controllers,
+    List<Valve>? valves,
+    List<Map<String, dynamic>>? stationTags,
+    List<Map<String, dynamic>>? blockTags,
+    String? selectedControllerId,
+    bool? isLoading,
+    String? error,
+  }) {
     return ControllersState(
       controllers: controllers ?? this.controllers,
       valves: valves ?? this.valves,
+      stationTags: stationTags ?? this.stationTags,
+      blockTags: blockTags ?? this.blockTags,
       selectedControllerId: selectedControllerId ?? this.selectedControllerId,
       isLoading: isLoading ?? this.isLoading,
       error: error,
@@ -55,6 +69,7 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
   final ApiClient _apiClient;
 
   static const _controllerNames = {
+    'C000': 'Main',
     'C001': 'Lanova',
     'C002': 'CBP',
     'C003': 'KAI',
@@ -107,13 +122,15 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
     }
   }
 
-  Future<void> loadValves(String controllerId) async {
+  Future<void> loadStationsForController(String controllerId) async {
     state = state.copyWith(isLoading: true, selectedControllerId: controllerId);
     try {
       final response = await _apiClient.get(ApiConstants.tagsList);
       final data = response.data;
       final Map<String, dynamic> tagsMap = Map<String, dynamic>.from(data is Map ? data : {});
       final List tags = (tagsMap['Tags'] ?? tagsMap['Data'] ?? []) as List;
+      final stations = <Map<String, dynamic>>[];
+      final blocks = <Map<String, dynamic>>[];
       final valves = <Valve>[];
       int stationNum = 1;
 
@@ -121,38 +138,63 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
         final tagMap = Map<String, dynamic>.from(tag is Map ? tag : {});
         final name = tagMap['Name']?.toString() ?? tagMap['TagName']?.toString() ?? '';
         final group = tagMap['Group']?.toString() ?? '';
+        if (group != controllerId) continue;
 
-        if (group == controllerId && name.toLowerCase().contains('station')) {
+        final lowerName = name.toLowerCase();
+        if (lowerName.contains('station')) {
+          stations.add(tagMap);
           valves.add(Valve(
             id: name,
             stationNumber: stationNum++,
-            name: name.split('.').last,
+            name: name.split('.').last.replaceAll(RegExp(r'[_]'), ' '),
             status: 'closed',
           ));
+        } else if (lowerName.contains('block')) {
+          blocks.add(tagMap);
         }
       }
 
-      state = state.copyWith(valves: valves, isLoading: false);
+      state = state.copyWith(
+        valves: valves,
+        stationTags: stations,
+        blockTags: blocks,
+        isLoading: false,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         valves: [],
+        stationTags: [],
+        blockTags: [],
         error: e.toString(),
       );
     }
   }
 
+  Future<void> loadValves(String controllerId) async {
+    await loadStationsForController(controllerId);
+  }
+
   Future<void> toggleValve(String valveId) async {
-    final currentValve = state.valves.firstWhere((v) => v.id == valveId);
+    final currentValve = state.valves.firstWhere(
+      (v) => v.id == valveId,
+      orElse: () => const Valve(id: '', stationNumber: 0, name: '', status: 'closed'),
+    );
     final newStatus = currentValve.status == 'open' ? 'closed' : 'open';
     try {
       await _apiClient.get(ApiConstants.tagValue(valveId));
       state = state.copyWith(
-        valves: state.valves.map((v) => v.id == valveId ? v.copyWith(status: newStatus, flowRate: newStatus == 'open' ? 15.5 : 0) : v).toList(),
+        valves: state.valves.map((v) => v.id == valveId
+            ? v.copyWith(status: newStatus, flowRate: newStatus == 'open' ? 15.5 : 0)
+            : v,
+        ).toList(),
       );
     } catch (_) {
       state = state.copyWith(
-        valves: state.valves.map((v) => v.id == valveId ? v.copyWith(status: newStatus, flowRate: newStatus == 'open' ? 15.5 : 0) : v).toList(),
+        valves: state.valves.map((v) => v.id == valveId
+            ? v.copyWith(status: newStatus, flowRate: newStatus == 'open' ? 15.5 : 0)
+            : v,
+        ).toList(),
       );
     }
   }
