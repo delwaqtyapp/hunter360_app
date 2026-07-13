@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hunter360_app/core/l10n/app_localizations.dart';
 import 'package:hunter360_app/features/auth/presentation/providers/auth_provider.dart';
 
 class MainScaffold extends ConsumerWidget {
@@ -19,6 +20,7 @@ class MainScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = _getCurrentIndex(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +28,7 @@ class MainScaffold extends ConsumerWidget {
           children: [
             Image.asset('assets/images/logo_hunter.png', height: 28, errorBuilder: (ctx, e, s) => const Icon(Icons.water_drop, color: Colors.white)),
             const SizedBox(width: 8),
-            const Text('Abqarino SCADA', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(l10n.appName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
           ],
         ),
         backgroundColor: const Color(0xFF156082),
@@ -47,30 +49,31 @@ class MainScaffold extends ConsumerWidget {
                 children: [
                   Image.asset('assets/images/logo_hunter.png', height: 48, errorBuilder: (ctx, e, s) => const Icon(Icons.water_drop, color: Colors.white, size: 48)),
                   const SizedBox(height: 8),
-                  const Text('Abqarino SCADA', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('v${const String.fromEnvironment("VERSION", defaultValue: "4.99.12")}', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  Text(l10n.appName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(l10n.company, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  Text('v4.99.12', style: const TextStyle(color: Colors.white54, fontSize: 11)),
                 ],
               ),
             ),
-            _drawerItem(context, Icons.dashboard, 'Dashboard', '/'),
+            _drawerItem(context, Icons.dashboard, l10n.dashboard, '/'),
             const Divider(),
-            _drawerItem(context, Icons.map, 'Map Control', '/map'),
-            _drawerItem(context, Icons.settings_input_antenna, 'Controllers', '/controllers'),
-            _drawerItem(context, Icons.schedule, 'Schedules', '/schedules'),
-            _drawerItem(context, Icons.water, 'Flow Management', '/flow'),
-            _drawerItem(context, Icons.wb_sunny, 'Weather', '/weather'),
+            _drawerItem(context, Icons.map, l10n.mapControl, '/map'),
+            _drawerItem(context, Icons.settings_input_antenna, l10n.controllers, '/controllers'),
+            _drawerItem(context, Icons.schedule, l10n.schedules, '/schedules'),
+            _drawerItem(context, Icons.water, l10n.flowManagement, '/flow'),
+            _drawerItem(context, Icons.wb_sunny, l10n.weather, '/weather'),
             const Divider(),
-            _drawerItem(context, Icons.warning, 'Alarms', '/alarms'),
-            _drawerItem(context, Icons.medical_information, 'Diagnostics', '/diagnostics'),
-            _drawerItem(context, Icons.play_circle, 'Operation Commands', '/operation-commands'),
-            _drawerItem(context, Icons.info, 'Operation Status', '/operation-status'),
+            _drawerItem(context, Icons.warning, l10n.alarms, '/alarms'),
+            _drawerItem(context, Icons.medical_information, l10n.diagnostics, '/diagnostics'),
+            _drawerItem(context, Icons.play_circle, l10n.operationCommands, '/operation-commands'),
+            _drawerItem(context, Icons.info, l10n.operationStatus, '/operation-status'),
             const Divider(),
-            _drawerItem(context, Icons.assessment, 'Reports', '/reports'),
-            _drawerItem(context, Icons.settings, 'Settings', '/settings'),
+            _drawerItem(context, Icons.assessment, l10n.reports, '/reports'),
+            _drawerItem(context, Icons.settings, l10n.settings, '/settings'),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout', style: TextStyle(color: Colors.red)),
+              title: Text(l10n.logout, style: const TextStyle(color: Colors.red)),
               onTap: () {
                 ref.read(authProvider.notifier).logout();
                 context.go('/login');
@@ -94,12 +97,12 @@ class MainScaffold extends ConsumerWidget {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF156082),
         unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings_input_antenna), label: 'Controllers'),
-          BottomNavigationBarItem(icon: Icon(Icons.schedule), label: 'Schedules'),
-          BottomNavigationBarItem(icon: Icon(Icons.warning), label: 'Alarms'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.dashboard), label: l10n.dashboard),
+          BottomNavigationBarItem(icon: const Icon(Icons.map), label: l10n.map),
+          BottomNavigationBarItem(icon: const Icon(Icons.settings_input_antenna), label: l10n.controllers),
+          BottomNavigationBarItem(icon: const Icon(Icons.schedule), label: l10n.schedules),
+          BottomNavigationBarItem(icon: const Icon(Icons.warning), label: l10n.alarms),
         ],
       ),
     );
