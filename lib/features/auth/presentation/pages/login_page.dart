@@ -50,6 +50,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
         await prefs.setString('LicenseData', license);
       } catch (_) {}
     }
+    if (!mounted) return;
     if (license != null && license.isNotEmpty) {
       try {
         final data = jsonDecode(license);
@@ -134,6 +135,9 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next.status == AuthStatus.authenticated) {
+        if (next.token != null && next.token!.isNotEmpty) {
+          ref.read(authTokenProvider.notifier).state = next.token!;
+        }
         context.go('/');
       } else if (next.status == AuthStatus.error) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -365,7 +369,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with SingleTickerProvider
                                 const SizedBox(height: 14),
                                 _GlassInput(
                                   controller: _serverUrlController,
-                                  hint: 'http://192.168.1.100:49110',
+                                  hint: 'http://10.10.8.60:49110',
                                   icon: Icons.dns_outlined,
                                 ),
                               ],

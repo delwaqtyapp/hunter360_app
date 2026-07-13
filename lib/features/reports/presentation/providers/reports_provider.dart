@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
-import 'package:hunter360_app/core/constants/app_constants.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
 
 enum ReportPeriod { daily, weekly, monthly, yearly }
@@ -87,15 +86,6 @@ class ReportsNotifier extends StateNotifier<ReportsState> {
         )) {
     loadFlowData();
   }
-
-  static const _zoneColors = [
-    '0xFF2196F3', // Blue Zone 1
-    '0xFF4CAF50', // Green Zone 2
-    '0xFFFF9800', // Orange Zone 3
-    '0xFFF44336', // Red Zone 4
-    '0xFF9C27B0', // Purple Zone 5
-    '0xFF795548', // Brown Zone 6
-  ];
 
   String _getFlowTag(int zoneIndex) {
     final controller = state.selectedController;

@@ -6,6 +6,7 @@ import 'package:hunter360_app/core/l10n/app_localizations.dart';
 import 'package:hunter360_app/core/theme/app_theme.dart';
 import 'package:hunter360_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
+import 'package:hunter360_app/features/alarms/presentation/providers/alarms_provider.dart';
 
 class MainScaffold extends ConsumerWidget {
   final Widget child;
@@ -28,9 +29,10 @@ class MainScaffold extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final serverUrl = ref.watch(serverUrlProvider);
+    final alarmsState = ref.watch(alarmsProvider);
 
     return Scaffold(
-      appBar: _SCADAAppBar(l10n: l10n, isDark: isDark, serverUrl: serverUrl),
+      appBar: _SCADAAppBar(l10n: l10n, isDark: isDark, serverUrl: serverUrl, alarmCount: alarmsState.alarms.length),
       drawer: _SCADADrawer(l10n: l10n, ref: ref, isDark: isDark, serverUrl: serverUrl),
       body: child,
       bottomNavigationBar: _SCADABottomNav(
@@ -50,11 +52,13 @@ class _SCADAAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppLocalizations l10n;
   final bool isDark;
   final String serverUrl;
+  final int alarmCount;
 
   const _SCADAAppBar({
     required this.l10n,
     required this.isDark,
     required this.serverUrl,
+    required this.alarmCount,
   });
 
   @override
@@ -180,28 +184,29 @@ class _SCADAAppBar extends StatelessWidget implements PreferredSizeWidget {
                 icon: const Icon(Icons.notifications_outlined, color: Colors.white, size: 24),
                 onPressed: () => context.push('/alarms'),
               ),
-              Positioned(
-                right: 6,
-                top: 6,
-                child: Container(
-                  width: 18,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: AppTheme.errorColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.errorColor.withOpacity(0.5),
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Text('3', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+              if (alarmCount > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: AppTheme.errorColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.errorColor.withOpacity(0.5),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(alarmCount > 99 ? '99+' : '$alarmCount', style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           // Settings gear

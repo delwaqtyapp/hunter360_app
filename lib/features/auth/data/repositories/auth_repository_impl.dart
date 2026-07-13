@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
@@ -81,14 +82,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   dynamic _simpleJsonDecode(String s) {
-    // Handle JSON string that might be wrapped in quotes
     var trimmed = s.trim();
     if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
       trimmed = trimmed.substring(1, trimmed.length - 1);
     }
-    // Try standard JSON decode
     try {
-      return Uri.decodeComponent(trimmed);
+      final decoded = jsonDecode(trimmed);
+      return decoded;
     } catch (_) {}
     return trimmed;
   }

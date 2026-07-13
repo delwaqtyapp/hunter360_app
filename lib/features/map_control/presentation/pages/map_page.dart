@@ -20,33 +20,11 @@ class _MapPageState extends ConsumerState<MapPage> {
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
   MapMarker? _bottomSheetMarker;
-  bool _mapReady = false;
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  LatLngBounds _calculateBounds(List<MapMarker> markers) {
-    if (markers.isEmpty) {
-      return LatLngBounds(
-        const LatLng(30.04, 31.48),
-        const LatLng(30.06, 31.52),
-      );
-    }
-    double minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
-    for (final m in markers) {
-      if (m.latitude < minLat) minLat = m.latitude;
-      if (m.latitude > maxLat) maxLat = m.latitude;
-      if (m.longitude < minLng) minLng = m.longitude;
-      if (m.longitude > maxLng) maxLng = m.longitude;
-    }
-    final padding = 0.005;
-    return LatLngBounds(
-      LatLng(minLat - padding, minLng - padding),
-      LatLng(maxLat + padding, maxLng + padding),
-    );
   }
 
   @override
@@ -68,7 +46,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               initialZoom: 13,
               minZoom: 3,
               maxZoom: 18,
-              onMapReady: () => setState(() => _mapReady = true),
+
               onTap: (_, __) {
                 setState(() => _bottomSheetMarker = null);
                 ref.read(mapProvider.notifier).selectMarker(null);
@@ -470,9 +448,12 @@ class _MapPageState extends ConsumerState<MapPage> {
 
     switch (marker.type) {
       case MarkerType.controller:
+        context.go('/controllers/${marker.id}');
+        break;
       case MarkerType.site:
-        final id = marker.id.startsWith('S') ? 'C002' : marker.id;
-        context.go('/controllers/$id');
+        final siteToController = {'S001': 'C001', 'S002': 'C002', 'S003': 'C003'};
+        final controllerId = siteToController[marker.id] ?? marker.controllerId;
+        context.go('/controllers/$controllerId');
         break;
       case MarkerType.station:
       case MarkerType.flowSensor:

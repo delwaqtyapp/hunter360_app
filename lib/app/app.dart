@@ -48,6 +48,14 @@ class _Hunter360AppState extends ConsumerState<Hunter360App> {
     ref.read(autoLogoutMinutesProvider.notifier).state = autoLogout;
 
     setState(() => _initialized = true);
+
+    // Propagate auto-login token to Dio interceptor after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = ref.read(authProvider);
+      if (authState.token != null && authState.token!.isNotEmpty) {
+        ref.read(authTokenProvider.notifier).state = authState.token!;
+      }
+    });
   }
 
   @override

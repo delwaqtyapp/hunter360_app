@@ -36,6 +36,7 @@ class RealtimeService {
   final Set<String> _subscribedTags = {};
   final StreamController<Map<String, TagValue>> _streamController = StreamController.broadcast();
   int _intervalMs = 1000;
+  int _consecutiveErrors = 0;
 
   RealtimeService(this._apiClient);
 
@@ -44,6 +45,7 @@ class RealtimeService {
   String getValue(String tagName) => _tagValues[tagName]?.scaledValue ?? '';
   String getStatus(String tagName) => _tagValues[tagName]?.status ?? '-';
   String getRawValue(String tagName) => _tagValues[tagName]?.rawValue ?? '';
+  bool get isConnected => _consecutiveErrors == 0 && _subscribedTags.isNotEmpty;
 
   void updateInterval(int ms) {
     _intervalMs = ms;
@@ -94,7 +96,10 @@ class RealtimeService {
         }
       }
       _streamController.add(Map.unmodifiable(_tagValues));
-    } catch (_) {}
+      _consecutiveErrors = 0;
+    } catch (_) {
+      _consecutiveErrors++;
+    }
   }
 
   Future<void> fetchOnce(List<String> tags) async {
@@ -114,7 +119,10 @@ class RealtimeService {
         }
       }
       _streamController.add(Map.unmodifiable(_tagValues));
-    } catch (_) {}
+      _consecutiveErrors = 0;
+    } catch (_) {
+      _consecutiveErrors++;
+    }
   }
 
   void dispose() {

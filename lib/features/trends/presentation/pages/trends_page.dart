@@ -392,7 +392,6 @@ class TrendsPage extends ConsumerWidget {
                             final tagIndex = lineBars.indexOf(
                               lineBars.firstWhere((b) => b.spots.contains(spot)),
                             );
-                            final color = tagColors[tagIndex % tagColors.length][0];
                             return LineTooltipItem(
                               '${spot.y.toStringAsFixed(2)}',
                               TextStyle(

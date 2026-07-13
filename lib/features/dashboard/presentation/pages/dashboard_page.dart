@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:hunter360_app/core/l10n/app_localizations.dart';
+import 'package:hunter360_app/core/theme/app_theme.dart';
 import 'package:hunter360_app/core/widgets/gauge_widget.dart';
 import 'package:hunter360_app/core/widgets/led_indicator.dart';
 import 'package:hunter360_app/core/widgets/flow_meter_widget.dart';
@@ -67,17 +68,54 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
         await ref.read(alarmsProvider.notifier).loadAlarms();
         await ref.read(controllersProvider.notifier).loadControllers();
       },
-      color: const Color(0xFF00E676),
-      backgroundColor: const Color(0xFF0D1B2A),
+      color: AppTheme.primaryColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(child: _buildHeader(l10n, isArabic, dashState)),
-          SliverToBoxAdapter(child: _buildSystemStatusRow(l10n, dashState)),
-          SliverToBoxAdapter(child: _buildControllerCards(l10n, controllersState, dashState)),
-          SliverToBoxAdapter(child: _buildFlowMetersSection(l10n, dashState)),
-          SliverToBoxAdapter(child: _buildQuickActions(l10n)),
-          SliverToBoxAdapter(child: _buildRecentAlarms(l10n, alarmsState)),
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          if (dashState.isLoading && !dashState.isConnected)
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(color: AppTheme.primaryColor),
+                    const SizedBox(height: 16),
+                    Text('Connecting to server...', style: TextStyle(color: Colors.white70)),
+                  ],
+                ),
+              ),
+            )
+          else if (dashState.error != null && !dashState.isConnected)
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.cloud_off_rounded, color: AppTheme.errorColor, size: 48),
+                    const SizedBox(height: 16),
+                    Text('Connection Error', style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Text(dashState.error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () => ref.read(dashboardProvider.notifier).loadDashboard(),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else ...[
+            SliverToBoxAdapter(child: _buildHeader(l10n, isArabic, dashState)),
+            SliverToBoxAdapter(child: _buildSystemStatusRow(l10n, dashState)),
+            SliverToBoxAdapter(child: _buildControllerCards(l10n, controllersState, dashState)),
+            SliverToBoxAdapter(child: _buildFlowMetersSection(l10n, dashState)),
+            SliverToBoxAdapter(child: _buildQuickActions(l10n)),
+            SliverToBoxAdapter(child: _buildRecentAlarms(l10n, alarmsState)),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          ],
         ],
       ),
     );
@@ -260,7 +298,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
               itemBuilder: (context, index) {
                 final c = controllersState.controllers[index];
                 final isIrrigating = dashState.irrigatingStatus['${c.id}.Irrigating'] ?? false;
-                final hasAlarm = dashState.activeAlarms > 0 && c.id == 'C001';
+                final hasAlarm = dashState.activeAlarms > 0;
                 return _controllerCard(l10n, c.id, c.displayName, c.tagCount, isIrrigating, hasAlarm);
               },
             ),

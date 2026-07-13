@@ -198,7 +198,5 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 }
 
 final dashboardProvider = StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
-  final notifier = DashboardNotifier(ref.read(apiClientProvider), ref.read(realtimeServiceProvider));
-  notifier.loadDashboard();
-  return notifier;
+  return DashboardNotifier(ref.read(apiClientProvider), ref.read(realtimeServiceProvider));
 });
