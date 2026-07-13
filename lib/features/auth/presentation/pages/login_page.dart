@@ -48,34 +48,40 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _uploadLicense() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json', 'lic', 'txt'],
-      );
-      if (result != null && result.files.isNotEmpty) {
-        final file = result.files.first;
-        String content;
-        if (file.bytes != null) {
-          content = String.fromCharCodes(file.bytes!);
-        } else if (file.path != null) {
-          content = await File(file.path!).readAsString();
-        } else {
-          return;
-        }
-        final data = jsonDecode(content);
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('LicenseData', content);
-        setState(() {
-          _licenseStatus = data['company']?.toString() ?? 'Licensed';
-        });
+      final result = await FilePicker.platform.pickFiles(type: FileType.any);
+      if (result == null || result.files.isEmpty) return;
+      final file = result.files.first;
+      final ext = file.extension?.toLowerCase() ?? '';
+      if (!['json', 'lic', 'txt'].contains(ext)) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('License loaded: ${_licenseStatus ?? "OK"}'),
-              backgroundColor: Colors.green,
-            ),
+            const SnackBar(content: Text('Only .json, .lic, .txt files are supported'), backgroundColor: Colors.orange),
           );
         }
+        return;
+      }
+      String content;
+      if (file.bytes != null) {
+        content = String.fromCharCodes(file.bytes!);
+      } else if (file.path != null) {
+        content = await File(file.path!).readAsString();
+      } else {
+        return;
+      }
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('LicenseData', content);
+      String companyName = 'Licensed';
+      try {
+        final data = jsonDecode(content);
+        companyName = data['company']?.toString() ?? 'Licensed';
+      } catch (_) {
+        companyName = 'Licensed ($ext)';
+      }
+      setState(() => _licenseStatus = companyName);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('License loaded: $companyName'), backgroundColor: Colors.green),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -229,18 +235,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       const SizedBox(height: 12),
                       GestureDetector(
                         onTap: _uploadLicense,
-                        child: Row(
-                          children: [
-                            Icon(Icons.upload_file, size: 16, color: Colors.grey.shade600),
-                            const SizedBox(width: 4),
-                            Text(l10n.uploadLicense, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-                            if (_licenseStatus != null) ...[
-                              const Spacer(),
-                              Icon(Icons.check_circle, size: 14, color: Colors.green),
-                              const SizedBox(width: 4),
-                              Text(_licenseStatus!, style: const TextStyle(fontSize: 11, color: Colors.green)),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _licenseStatus != null ? Colors.green.withOpacity(0.08) : Colors.grey.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: _licenseStatus != null ? Colors.green.withOpacity(0.3) : Colors.grey.withOpacity(0.2)),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(_licenseStatus != null ? Icons.verified : Icons.upload_file, size: 16, color: _licenseStatus != null ? Colors.green : Colors.grey.shade600),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _licenseStatus != null ? l10n.license : l10n.uploadLicense,
+                                  style: TextStyle(fontSize: 12, color: _licenseStatus != null ? Colors.green.shade700 : Colors.grey.shade600, fontWeight: _licenseStatus != null ? FontWeight.w600 : FontWeight.normal),
+                                ),
+                              ),
+                              if (_licenseStatus != null) ...[
+                                Text(_licenseStatus!, style: TextStyle(fontSize: 11, color: Colors.green.shade700)),
+                              ] else ...[
+                                Icon(Icons.chevron_right, size: 16, color: Colors.grey.shade400),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
