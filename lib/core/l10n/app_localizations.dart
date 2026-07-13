@@ -247,6 +247,73 @@ class AppLocalizations {
   String get startTime => isArabic ? 'وقت البدء' : 'Start Time';
   String get add => isArabic ? 'إضافة' : 'Add';
 
+  // --- Schedules Advanced ---
+  String get weeklySchedule => isArabic ? 'أسبوعي' : 'Weekly';
+  String get oddEvenSchedule => isArabic ? 'فردي/زوجي' : 'Odd/Even';
+  String get intervalSchedule => isArabic ? 'فترة' : 'Interval';
+  String get manualSchedule => isArabic ? 'يدوي' : 'Manual';
+  String get noWaterWindowLabel => isArabic ? 'فترة منع الري' : 'No Water Window';
+  String get noWaterWindowDesc => isArabic ? 'فترات يكون فيها الري محظوراً' : 'Periods when irrigation is prohibited';
+  String get startTimeLabel => isArabic ? 'وقت البدء' : 'Start Time';
+  String get endTimeLabel => isArabic ? 'وقت الانتهاء' : 'End Time';
+  String get stationDelay => isArabic ? 'تأخير المحطة' : 'Station Delay';
+  String get stationDelayDesc => isArabic ? 'التأخير بين المحطات' : 'Delay between stations';
+  String get stackMode => isArabic ? 'تتابع' : 'Stack';
+  String get overlapMode => isArabic ? 'تراكب' : 'Overlap';
+  String get stackOrOverlap => isArabic ? 'تتابع أو تراكب' : 'Stack or Overlap';
+  String get stackDesc => isArabic ? 'محطة واحدة في كل مرة' : 'One station at a time';
+  String get overlapDesc => isArabic ? 'محطات متزامنة' : 'Concurrent stations';
+  String get startTimes => isArabic ? 'أوقات البدء' : 'Start Times';
+  String get startTimeNumber => isArabic ? 'وقت البدء' : 'Start Time';
+  String get runTimes => isArabic ? 'أوقات التشغيل' : 'Run Times';
+  String get runTimeMinutesLabel => isArabic ? 'وقت التشغيل (دقيقة)' : 'Run Time (minutes)';
+  String get programMode => isArabic ? 'وضع البرنامج' : 'Program Mode';
+  String get autoMode => isArabic ? 'تلقائي' : 'Auto';
+  String get manualMode => isArabic ? 'يدوي' : 'Manual';
+  String get oddDays => isArabic ? 'أيام فردية' : 'Odd Days';
+  String get evenDays => isArabic ? 'أيام زوجية' : 'Even Days';
+  String get bothOddEven => isArabic ? 'كلاهما' : 'Both';
+  String get intervalDays => isArabic ? 'كل يوم (عدد الأيام)' : 'Interval (days)';
+  String get scheduleType => isArabic ? 'نوع الجدول' : 'Schedule Type';
+
+  // --- Flow Advanced ---
+  String get learnFlow => isArabic ? 'تعلم التدفق' : 'Learn Flow';
+  String get startLearnFlow => isArabic ? 'بدء تعلم التدفق' : 'Start Learn Flow';
+  String get stopLearnFlow => isArabic ? 'إيقاف تعلم التدفق' : 'Stop Learn Flow';
+  String get learnFlowStatus => isArabic ? 'حالة تعلم التدفق' : 'Learn Flow Status';
+  String get idle => isArabic ? 'خامل' : 'Idle';
+  String get learning => isArabic ? 'جاري التعلم' : 'Learning';
+  String get learnComplete => isArabic ? 'اكتمل التعلم' : 'Complete';
+  String get learnFlowResults => isArabic ? 'نتائج تعلم التدفق' : 'Learn Flow Results';
+  String get highFlowShutdown => isArabic ? 'إيقاف التدفق المرتفع' : 'High Flow Shutdown';
+  String get highFlowShutdownDesc => isArabic ? 'إيقاف تشغيل الري عند تجاوز العتبة' : 'Shutdown when flow exceeds threshold';
+  String get shutdownThreshold => isArabic ? 'عتبة الإيقاف (جاليون/دقيقة)' : 'Shutdown Threshold (GPM)';
+  String get autoResetTimer => isArabic ? 'مؤقت إعادة التشغيل التلقائي (دقائق)' : 'Auto Reset Timer (minutes)';
+  String get shutdownActive => isArabic ? 'الإيقاف نشط' : 'Shutdown Active';
+  String get shutdownInactive => isArabic ? 'الإيقاف غير نشط' : 'Shutdown Inactive';
+  String get flowZones => isArabic ? 'مناطق التدفق' : 'Flow Zones';
+  String get zoneName => isArabic ? 'اسم المنطقة' : 'Zone Name';
+  String get flowTarget => isArabic ? 'الهدف (جاليون/دقيقة)' : 'Flow Target (GPM)';
+  String get maxFlowLimit => isArabic ? 'الحد الأقصى للتدفق' : 'Max Flow Limit';
+  String get overFlowLimit => isArabic ? 'حد التدفق الزائد' : 'Over Flow Limit';
+  String get underFlowLimit => isArabic ? 'حد التدفق المنخفض' : 'Under Flow Limit';
+  String get unscheduledFlowLimit => isArabic ? 'حد التدفق غير المخطط' : 'Unscheduled Flow Limit';
+  String get monthlyBudget => isArabic ? 'الميزانية الشهرية (جاليون)' : 'Monthly Budget (gallons)';
+  String get manualAllowance => isArabic ? 'السماحية اليدوية' : 'Manual Allowance';
+  String get flowStatusNormal => isArabic ? 'طبيعي' : 'Normal';
+  String get flowStatusHigh => isArabic ? 'مرتفع' : 'High';
+  String get flowStatusLow => isArabic ? 'منخفض' : 'Low';
+  String get cycleAndSoak => isArabic ? 'الدورات والامتصاص' : 'Cycle and Soak';
+  String get cycleAndSoakDesc => isArabic ? 'يمنع التسرب عن طريق تدوير الري مع فترات امتصاص' : 'Prevents runoff by cycling irrigation with soak periods';
+  String get cycleTime => isArabic ? 'وقت الدورة (دقائق)' : 'Cycle Time (minutes)';
+  String get soakTime => isArabic ? 'وقت الامتصاص (دقائق)' : 'Soak Time (minutes)';
+  String get flowPriority => isArabic ? 'أولوية التدفق' : 'Flow Priority';
+  String get waterSourceFlow => isArabic ? 'تدفق مصدر المياه' : 'Water Source Flow';
+  String get totalWaterSourceFlow => isArabic ? 'إجمالي تدفق مصدر المياه' : 'Total Water Source Flow';
+  String get flowSensorMap => isArabic ? 'خريطة مستشعرات التدفق' : 'Flow Sensor Map';
+  String get gpm => isArabic ? 'جاليون/دقيقة' : 'GPM';
+  String get gallons => isArabic ? 'جاليون' : 'gal';
+
   // --- Weather ---
   String get weatherStation => isArabic ? 'محطة الطقس' : 'Weather Station';
   String get currentConditions => isArabic ? 'الظروف الحالية' : 'Current Conditions';
@@ -263,8 +330,234 @@ class AppLocalizations {
   String get dailyET => isArabic ? 'ET اليومي' : 'Daily ET';
   String get weeklyET => isArabic ? 'ET الأسبوعي' : 'Weekly ET';
   String get monthlyET => isArabic ? 'ET الشهري' : 'Monthly ET';
+  String get yearlyET => isArabic ? 'ET السنوي' : 'Yearly ET';
   String get etBasedOnPenmanMonteith => isArabic ? 'ET بناءً على بانمان-مونتيث' : 'ET based on Penman-Monteith';
   String get weatherHistory => isArabic ? 'سجل الطقس' : 'Weather History';
+
+  // --- Sites ---
+  String get sitesTitle => isArabic ? 'المواقع' : 'Sites';
+  String get siteId => isArabic ? 'رقم الموقع' : 'Site ID';
+  String get siteName => isArabic ? 'اسم الموقع' : 'Site Name';
+  String get coordinates => isArabic ? 'الإحداثيات' : 'Coordinates';
+  String get controllersCount => isArabic ? 'عدد الكنترولات' : 'Controllers';
+  String get stationsCount => isArabic ? 'عدد المحطات' : 'Stations';
+  String get flowSensorsCount => isArabic ? 'عدادات التدفق' : 'Flow Sensors';
+  String get pmvCount => isArabic ? 'الصمامات' : 'PMVs';
+  String get siteStatus => isArabic ? 'حالة الموقع' : 'Site Status';
+  String get siteDetails => isArabic ? 'تفاصيل الموقع' : 'Site Details';
+  String get latLabel => isArabic ? 'خط العرض' : 'Latitude';
+  String get lngLabel => isArabic ? 'خط الطول' : 'Longitude';
+  String get tapToNavigate => isArabic ? 'اضغط للانتقال' : 'Tap to navigate';
+
+  // --- Controller Info Tab ---
+  String get infoTab => isArabic ? 'المعلومات' : 'Info';
+  String get controllerType => isArabic ? 'نوع الكنترولر' : 'Controller Type';
+  String get firmwareVersion => isArabic ? 'إصدار البرنامج' : 'Firmware Version';
+  String get stationSize => isArabic ? 'حجم المحطات' : 'Station Size';
+  String get currentDateTime => isArabic ? 'التاريخ والوقت' : 'Date/Time';
+  String get ipAddress => isArabic ? 'عنوان IP' : 'IP Address';
+  String get communicationProtocol => isArabic ? 'بروتوكول الاتصال' : 'Communication Protocol';
+  String get masterSlaveMode => isArabic ? 'وضع الماستر/سليف' : 'Master/Slave Mode';
+  String get controllerTypeLabel => isArabic ? 'النوع' : 'Type';
+  String get moduleInformation => isArabic ? 'معلومات الوحدات' : 'Module Information';
+  String get currentDraw => isArabic ? 'التيار الكهربائي' : 'Current Draw';
+  String get overloadStatus => isArabic ? 'حالة الحمل الزائد' : 'Overload Status';
+  String get pathStatus => isArabic ? 'حالة المسار' : 'Path Status';
+  String get systemStatus => isArabic ? 'حالة النظام' : 'System Status';
+  String get shutdownStatus => isArabic ? 'حالة الإيقاف' : 'Shutdown';
+  String get daysOffStatus => isArabic ? 'أيام الإيقاف' : 'Days Off';
+  String get suspendStatus => isArabic ? 'حالة التعليق' : 'Suspend/Pause';
+  String get muteStatus => isArabic ? 'حالة الكتم' : 'Mute';
+  String get connectionStatistics => isArabic ? 'إحصائيات الاتصال' : 'Connection Statistics';
+  String get communicationQuality => isArabic ? 'جودة الاتصال' : 'Communication Quality';
+  String get lastCommunication => isArabic ? 'آخر اتصال ناجح' : 'Last Communication';
+  String get retryCount => isArabic ? 'عدد المحاولات' : 'Retry Count';
+  String get module => isArabic ? 'وحدة' : 'Module';
+  String get normalLabel => isArabic ? 'طبيعي' : 'Normal';
+  String get activeLabel => isArabic ? 'نشط' : 'Active';
+  String get noneLabel => isArabic ? 'لا يوجد' : 'None';
+
+  // --- Schedule Editor ---
+  String get programLabel => isArabic ? 'البرنامج' : 'Program';
+  String get programA => isArabic ? 'البرنامج أ' : 'Program A';
+  String get programB => isArabic ? 'البرنامج ب' : 'Program B';
+  String get programC => isArabic ? 'البرنامج ج' : 'Program C';
+  String get programD => isArabic ? 'البرنامج د' : 'Program D';
+  String get daySelection => isArabic ? 'اختيار الأيام' : 'Day Selection';
+  String get startTimesLabel => isArabic ? 'أوقات البدء' : 'Start Times';
+  String get addStartTime => isArabic ? 'إضافة وقت بدء' : 'Add Start Time';
+  String get removeTime => isArabic ? 'إزالة الوقت' : 'Remove time';
+  String get stationListLabel => isArabic ? 'قائمة المحطات' : 'Station List';
+  String get runTimeMinutes => isArabic ? 'وقت التشغيل (دقائق)' : 'Run Time (min)';
+  String get enableDisableLabel => isArabic ? 'تفعيل/تعطيل' : 'Enable/Disable';
+  String get scheduleTypeLabel => isArabic ? 'نوع الجدول' : 'Schedule Type';
+  String get weeklyLabel => isArabic ? 'أسبوعي' : 'Weekly';
+  String get oddEvenLabel => isArabic ? 'فردي/زوجي' : 'Odd/Even';
+  String get intervalLabel => isArabic ? 'فترة' : 'Interval';
+  String get noWaterWindow => isArabic ? 'فترة عدم الري' : 'No Water Window';
+  String get noWaterStart => isArabic ? 'بداية فترة عدم الري' : 'No Water Start';
+  String get noWaterEnd => isArabic ? 'نهاية فترة عدم الري' : 'No Water End';
+  String get saveSchedule => isArabic ? 'حفظ الجدول' : 'Save Schedule';
+  String get scheduleSaved => isArabic ? 'تم حفظ الجدول' : 'Schedule saved';
+  String get scheduleEditorTitle => isArabic ? 'محرر الجداول' : 'Schedule Editor';
+  String get seasonalIndicator => isArabic ? 'التعديل الموسمي' : 'Seasonal';
+
+  // --- Security / User Management ---
+  String get securityTitle => isArabic ? 'الأمان' : 'Security';
+  String get userManagement => isArabic ? 'إدارة المستخدمين' : 'User Management';
+  String get addUser => isArabic ? 'إضافة مستخدم' : 'Add User';
+  String get editUserLabel => isArabic ? 'تعديل المستخدم' : 'Edit User';
+  String get deleteUserLabel => isArabic ? 'حذف المستخدم' : 'Delete User';
+  String get usernameLabel => isArabic ? 'اسم المستخدم' : 'Username';
+  String get pinCode => isArabic ? 'كود PIN' : 'PIN Code';
+  String get roleLabelD => isArabic ? 'الدور' : 'Role';
+  String get adminRole => isArabic ? 'مدير' : 'Admin';
+  String get crewRole => isArabic ? 'طاقم عمل' : 'Crew';
+  String get accessLevelD => isArabic ? 'مستوى الوصول' : 'Access Level';
+  String get userManagementBypass => isArabic ? 'تجاوز إدارة المستخدمين' : 'User Management Bypass';
+  String get factoryResetLabel => isArabic ? 'إعادة الضبط من المصنع' : 'Factory Reset';
+  String get dialPositionTitle => isArabic ? 'موضع العدّاد' : 'Dial Position';
+  String get userEventsLog => isArabic ? 'سجل أحداث المستخدمين' : 'User Events Log';
+  String get recentEvents => isArabic ? 'الأحداث الأخيرة' : 'Recent Events';
+  String get enableLabel => isArabic ? 'تفعيل' : 'Enable';
+  String get disableLabel => isArabic ? 'تعطيل' : 'Disable';
+  String get activeLabelD => isArabic ? 'نشط' : 'Active';
+  String get inactiveLabel => isArabic ? 'غير نشط' : 'Inactive';
+  String get loginEvent => isArabic ? 'تسجيل الدخول' : 'Login';
+  String get logoutEvent => isArabic ? 'تسجيل الخروج' : 'Logout';
+  String get runDial => isArabic ? 'تشغيل' : 'Run';
+  String get dateTimeDial => isArabic ? 'التاريخ والوقت' : 'Date/Time';
+  String get stationRuntimes => isArabic ? 'أوقات تشغيل المحطات' : 'Station Runtimes';
+  String get daysToWater => isArabic ? 'أيام الري' : 'Days to Water';
+  String get pumpOperation => isArabic ? 'تشغيل المضخة' : 'Pump Operation';
+  String get solarSync => isArabic ? 'مزامنة الطاقة الشمسية' : 'Solar Sync';
+  String get systemOff => isArabic ? 'إيقاف النظام' : 'System Off';
+  String get deleteUserConfirm => isArabic ? 'هل أنت متأكد من حذف هذا المستخدم؟' : 'Are you sure you want to delete this user?';
+  String get manualOperationDial => isArabic ? 'التشغيل اليدوي' : 'Manual Operation';
+  String get seasonalAdjustmentDial => isArabic ? 'التعديل الموسمي' : 'Seasonal Adjustment';
+
+  // --- Alarm History ---
+  String get alarmHistoryTitle => isArabic ? 'سجل الإنذارات' : 'Alarm History';
+  String get fromLabel => isArabic ? 'من' : 'From';
+  String get toLabel => isArabic ? 'إلى' : 'To';
+  String get controllerFilterLabel => isArabic ? 'فلتر الكنترولر' : 'Controller Filter';
+  String get priorityFilterLabel => isArabic ? 'فلتر الأولوية' : 'Priority Filter';
+  String get totalInPeriod => isArabic ? 'إجمالي الفترة' : 'Total in Period';
+  String get mostCommonAlarm => isArabic ? 'أكثر إنذار تكراراً' : 'Most Common Alarm';
+  String get avgResolution => isArabic ? 'متوسط وقت الحل' : 'Avg Resolution Time';
+  String get hoursUnit => isArabic ? 'ساعة' : 'hrs';
+  String get noDataInPeriod => isArabic ? 'لا توجد بيانات في هذه الفترة' : 'No data in this period';
+  String get filterByPriority => isArabic ? 'فلترة حسب الأولوية' : 'Filter by Priority';
+
+  // --- Diagnostics Enhanced ---
+  String get module1Label => isArabic ? 'الوحدة 1' : 'Module 1';
+  String get module2Label => isArabic ? 'الوحدة 2' : 'Module 2';
+  String get module3Label => isArabic ? 'الوحدة 3' : 'Module 3';
+  String get outputMode => isArabic ? 'وضع الإخراج' : 'Output Mode';
+  String get decoderCommunicationTitle => isArabic ? 'اتصال المفكك' : 'Decoder Communication';
+  String get commPercentage => isArabic ? 'نسبة الاتصال' : 'Communication %';
+  String get totalDecoders => isArabic ? 'إجمالي المفككات' : 'Total Decoders';
+  String get activeDecodersCount => isArabic ? 'المفككات النشطة' : 'Active Decoders';
+  String get decoderWireTest => isArabic ? 'اختبار أسلاك المفكك' : 'Decoder Wire Test';
+  String get blockSettingsTitle => isArabic ? 'إعدادات البلوكات' : 'Block Settings';
+  String get cycleSettings => isArabic ? 'إعدادات الدورة' : 'Cycle Settings';
+  String get soakSettings => isArabic ? 'إعدادات النقع' : 'Soak Settings';
+  String get hydraulicConnection => isArabic ? 'الاتصال الهيدروليكي' : 'Hydraulic Connection';
+  String get masterValveAssoc => isArabic ? 'ربط الصمام الرئيسي' : 'Master Valve Association';
+  String get linkFlowZone => isArabic ? 'منطقة تدفق الربط' : 'Link Flow Zone';
+  String get currentDrawTrend => isArabic ? 'اتجاه التيار الحالي' : 'Current Draw Trend';
+  String get overloadLabel => isArabic ? 'حمل زائد' : 'Overload';
+  String get normalStatusLabel => isArabic ? 'طبيعي' : 'Normal';
+  String get connectedLabel => isArabic ? 'متصل' : 'Connected';
+  String get disconnectedLabel => isArabic ? 'غير متصل' : 'Disconnected';
+  String get valveLabel => isArabic ? 'صمام' : 'Valve';
+  String get blockNumberLabel => isArabic ? 'رقم البلوك' : 'Block No.';
+  String get yesLabel => isArabic ? 'نعم' : 'Yes';
+  String get noLabel => isArabic ? 'لا' : 'No';
+  String get mAUnit => isArabic ? 'ميغا أمبير' : 'mA';
+  String get controllerTypeLabelD => isArabic ? 'نوع الكنترولر' : 'Controller Type';
+  String get firmwareLabel => isArabic ? 'الإصدار' : 'Firmware';
+  String get stationSizeLabelD => isArabic ? 'حجم المحطة' : 'Station Size';
+  String get commProtocolLabel => isArabic ? 'بروتوكول الاتصال' : 'Comm Protocol';
+
+  // --- Map Control ---
+  String get site => isArabic ? 'موقع' : 'Site';
+  String get flowSensor => isArabic ? 'مقياس التدفق' : 'Flow Sensor';
+  String get parentController => isArabic ? 'الكنترولر الأب' : 'Parent Controller';
+  String get viewDetails => isArabic ? 'عرض التفاصيل' : 'View Details';
+  String get latitudeLabel => isArabic ? 'خط العرض' : 'Latitude';
+  String get longitudeLabel => isArabic ? 'خط الطول' : 'Longitude';
+  String get activeValves => isArabic ? 'صمامات نشطة' : 'Active Valves';
+  String get searchMap => isArabic ? 'بحث في الخريطة...' : 'Search map...';
+  String get allTypes => isArabic ? 'الكل' : 'All';
+  String get sitesLabel => isArabic ? 'المواقع' : 'Sites';
+  String get stationsLabel => isArabic ? 'المحطات' : 'Stations';
+  String get flowSensorsLabel => isArabic ? 'مقياسات التدفق' : 'Flow Sensors';
+  String get pmvsLabel => isArabic ? 'الصمامات' : 'PMVs';
+  String get mapLegend => isArabic ? 'دليل الخريطة' : 'Map Legend';
+  String get tapMarkerForDetails => isArabic ? 'اضغط على العلامة للتفاصيل' : 'Tap a marker for details';
+  String get markersFound => isArabic ? 'علامة موجودة' : 'markers found';
+  String get dailyFlow => isArabic ? 'التدفق اليومي' : 'Daily Flow';
+  String get weeklyFlow => isArabic ? 'التدفق الأسبوعي' : 'Weekly Flow';
+  String get monthlyFlow => isArabic ? 'التدفق الشهري' : 'Monthly Flow';
+  String get yearlyFlow => isArabic ? 'التدفق السنوي' : 'Yearly Flow';
+  String get flowByZone => isArabic ? 'التدفق حسب المنطقة' : 'Flow by Zone';
+  String get trendChart => isArabic ? 'الرسم البياني للاتجاه' : 'Trend Chart';
+  String get selectPeriod => isArabic ? 'اختر الفترة' : 'Select Period';
+  String get totalFlowLabel => isArabic ? 'إجمالي التدفق' : 'Total Flow';
+  String get litersUnit => isArabic ? 'لتر' : 'Liters';
+  String get zone5 => isArabic ? 'المنطقة 5' : 'Zone 5';
+  String get zone6 => isArabic ? 'المنطقة 6' : 'Zone 6';
+  String get flowHistory => isArabic ? 'سجل التدفق' : 'Flow History';
+  String get cubicMetersShort => isArabic ? 'م³' : 'm³';
+  String get gallonsShort => isArabic ? 'جالون' : 'gal';
+  String get zonesLabel => isArabic ? 'مناطق' : 'Zones';
+
+  // --- Trends ---
+  String get trendTitle => isArabic ? 'المنحنى' : 'Trends';
+  String get trendFlow => isArabic ? 'التدفق' : 'Flow';
+  String get trendCurrentDraw => isArabic ? 'التيار' : 'Current Draw';
+  String get trendSeasonalAdjust => isArabic ? 'التعديل الموسمي' : 'Seasonal Adjust';
+  String get trendFlowChart => isArabic ? 'رسم بياني للتدفق' : 'Flow Trend Chart';
+  String get trendCurrentDrawChart => isArabic ? 'رسم بياني للتيار' : 'Current Draw Trend Chart';
+  String get trendSeasonalAdjustChart => isArabic ? 'رسم بياني للتعديل الموسمي' : 'Seasonal Adjust Trend Chart';
+  String get timeRangeLabel => isArabic ? 'النطاق الزمني' : 'Time Range';
+  String get trendMin => isArabic ? 'الحد الأدنى' : 'Min';
+  String get trendMax => isArabic ? 'الحد الأقصى' : 'Max';
+  String get trendAverage => isArabic ? 'المتوسط' : 'Average';
+  String get trendActiveTags => isArabic ? 'العلامات النشطة' : 'Active Tags';
+
+  // --- Solar Sync ---
+  String get solarSyncTitle => isArabic ? 'Solar Sync' : 'Solar Sync';
+  String get solarSyncSettings => isArabic ? 'إعدادات Solar Sync' : 'Solar Sync Settings';
+  String get solarSyncEnableSensor => isArabic ? 'تفعيل المستشعر' : 'Enable Sensor';
+  String get solarSyncEnableSensorDesc => isArabic ? 'تشغيل/إيقاف مستشعر الطقس الذكي' : 'Toggle smart weather sensor';
+  String get solarSyncRegion => isArabic ? 'المنطقة' : 'Region';
+  String get solarSyncRegionLabel => isArabic ? 'المنطقة' : 'Region';
+  String get solarSyncWaterAdjustment => isArabic ? 'معامل تعديل المياه' : 'Water Adjustment Factor';
+  String get solarSyncDelayDays => isArabic ? 'أيام التأخير' : 'Delay Days';
+  String get solarSyncDelayDaysDesc => isArabic ? 'تأخير التعديل بعد هطول الأمطار' : 'Delay adjustment after rainfall';
+  String get solarSyncAdjDuringDelay => isArabic ? 'التعديل أثناء التأخير' : 'Adjustment During Delay';
+  String get solarSyncAdjDuringDelayDesc => isArabic ? 'تطبيق التعديل أثناء فترة التأخير' : 'Apply adjustment during delay period';
+  String get solarSyncReadings => isArabic ? 'القراءات الحية' : 'Live Readings';
+  String get solarSyncLive => isArabic ? 'مباشر' : 'LIVE';
+  String get solarRadiation => isArabic ? 'الإشعاع الشمسي' : 'Solar Radiation';
+  String get solarSyncETHistory => isArabic ? 'سجل ET' : 'ET History';
+  String get solarSyncSaveSuccess => isArabic ? 'تم حفظ الإعدادات بنجاح' : 'Settings saved successfully';
+  String get solarSyncSaveError => isArabic ? 'خطأ في حفظ الإعدادات' : 'Error saving settings';
+
+  // --- ET Calculation ---
+  String get etCalculationTitle => isArabic ? 'حساب ET' : 'ET Calculation';
+  String get etCurrentETo => isArabic ? 'التبخر-النتح الحالي (ETo)' : 'Current ETo';
+  String get etPenmanMonteith => isArabic ? 'بانمان-مونتيث' : 'Penman-Monteith';
+  String get etCalculatedETo => isArabic ? 'ETo المحسوب' : 'Calculated ETo';
+  String get etAccumulation => isArabic ? 'تراكم ET' : 'ET Accumulation';
+  String get etTrendChart => isArabic ? 'رسم بياني لـ ET' : 'ET Trend Chart';
+  String get etReport => isArabic ? 'تقرير ET' : 'ET Report';
+  String get etValidDays => isArabic ? 'أيام ET الصالحة' : 'Valid ET Days';
+  String get etAverage => isArabic ? 'متوسط ET' : 'ET Average';
+  String get etLast7Days => isArabic ? 'ET آخر 7 أيام' : 'ET Last 7 Days';
+  String get etLast30Days => isArabic ? 'ET آخر 30 يوم' : 'ET Last 30 Days';
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

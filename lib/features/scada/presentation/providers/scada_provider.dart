@@ -7,20 +7,29 @@ class ScadaState {
   final String selectedController;
   final Map<String, String> tagValues;
   final List<Map<String, dynamic>> alarms;
+  final List<double> currentDrawHistory;
   final bool isLoading;
 
   const ScadaState({
     this.selectedController = 'C001',
     this.tagValues = const {},
     this.alarms = const [],
+    this.currentDrawHistory = const [],
     this.isLoading = false,
   });
 
-  ScadaState copyWith({String? selectedController, Map<String, String>? tagValues, List<Map<String, dynamic>>? alarms, bool? isLoading}) {
+  ScadaState copyWith({
+    String? selectedController,
+    Map<String, String>? tagValues,
+    List<Map<String, dynamic>>? alarms,
+    List<double>? currentDrawHistory,
+    bool? isLoading,
+  }) {
     return ScadaState(
       selectedController: selectedController ?? this.selectedController,
       tagValues: tagValues ?? this.tagValues,
       alarms: alarms ?? this.alarms,
+      currentDrawHistory: currentDrawHistory ?? this.currentDrawHistory,
       isLoading: isLoading ?? this.isLoading,
     );
   }
@@ -49,6 +58,26 @@ class ScadaNotifier extends StateNotifier<ScadaState> {
     'Clik Sensor Rain Delay Alarm',
     'NWW Violation Detected',
     'Weather Sensor Rain Delay Alarm',
+  ];
+
+  static const _moduleNames = ['Module1', 'Module2', 'Module3'];
+  static const _moduleTagParts = ['CurrentDraw', 'Overload', 'PathStatus', 'OutputMode'];
+
+  static const _decoderTags = [
+    'DecoderCommPercentage',
+    'TotalDecoders',
+    'ActiveDecoders',
+    'DecoderWireTestStatus',
+  ];
+
+  static const _blockTagParts = ['CycleTime', 'SoakTime', 'HydraulicConnection', 'MasterValve', 'LinkFlowZone'];
+
+  static const _controllerInfoTags = [
+    'ControllerType',
+    'FirmwareVersion',
+    'StationSize',
+    'IPAddress',
+    'CommunicationProtocol',
   ];
 
   static const _infoTags = [
@@ -92,6 +121,26 @@ class ScadaNotifier extends StateNotifier<ScadaState> {
     for (final t in _infoTags) {
       tags.add('$c.ReportAlarmsInformation_${t.replaceAll(' ', '').replaceAll('.', '')}_Status');
     }
+    // Module tags
+    for (final m in _moduleNames) {
+      for (final p in _moduleTagParts) {
+        tags.add('$c.$m.$p');
+      }
+    }
+    // Decoder tags
+    for (final t in _decoderTags) {
+      tags.add('$c.$t');
+    }
+    // Block tags (up to 6 blocks)
+    for (int i = 1; i <= 6; i++) {
+      for (final p in _blockTagParts) {
+        tags.add('$c.Block$i.$p');
+      }
+    }
+    // Controller info tags
+    for (final t in _controllerInfoTags) {
+      tags.add('$c.$t');
+    }
     _realtime.subscribe(tags);
   }
 
@@ -129,6 +178,50 @@ class ScadaNotifier extends StateNotifier<ScadaState> {
 
   String getTagValue(String tagName) => _realtime.getValue(tagName);
   String getTagStatus(String tagName) => _realtime.getStatus(tagName);
+
+  List<Map<String, String>> getModuleInfo(int moduleIndex) {
+    final c = state.selectedController;
+    final moduleName = _moduleNames[moduleIndex];
+    return _moduleTagParts.map((p) {
+      return {'label': p, 'value': _realtime.getValue('$c.$moduleName.$p')};
+    }).toList();
+  }
+
+  Map<String, String> get decoderInfo {
+    final c = state.selectedController;
+    return {
+      'commPercentage': _realtime.getValue('$c.DecoderCommPercentage'),
+      'totalDecoders': _realtime.getValue('$c.TotalDecoders'),
+      'activeDecoders': _realtime.getValue('$c.ActiveDecoders'),
+      'wireTest': _realtime.getValue('$c.DecoderWireTestStatus'),
+    };
+  }
+
+  List<Map<String, String>> getBlockInfo(int blockIndex) {
+    final c = state.selectedController;
+    final blockName = 'Block${blockIndex + 1}';
+    return _blockTagParts.map((p) {
+      return {'label': p, 'value': _realtime.getValue('$c.$blockName.$p')};
+    }).toList();
+  }
+
+  Map<String, String> get controllerInfoData {
+    final c = state.selectedController;
+    final result = <String, String>{};
+    for (final t in _controllerInfoTags) {
+      result[t] = _realtime.getValue('$c.$t');
+    }
+    return result;
+  }
+
+  void recordCurrentDraw() {
+    final c = state.selectedController;
+    final value = double.tryParse(_realtime.getValue('$c.Module1.CurrentDraw')) ?? 0;
+    final history = List<double>.from(state.currentDrawHistory);
+    history.add(value);
+    if (history.length > 30) history.removeAt(0);
+    state = state.copyWith(currentDrawHistory: history);
+  }
 
   Future<void> sendCommand(String tagName, String value) async {
     try {

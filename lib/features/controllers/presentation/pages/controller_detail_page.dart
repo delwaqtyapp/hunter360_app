@@ -20,7 +20,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     Future.microtask(() {
       ref.read(controllersProvider.notifier).loadStationsForController(widget.controllerId);
       _subscribeToRealtime();
@@ -31,7 +31,32 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
     final realtimeService = ref.read(realtimeServiceProvider);
     final state = ref.read(controllersProvider);
     final tagNames = state.valves.map((v) => v.id).toList();
-    realtimeService.subscribe(tagNames);
+
+    final infoTags = [
+      '${widget.controllerId}.ControllerInfo.FirmwareVersion',
+      '${widget.controllerId}.ControllerInfo.IP',
+      '${widget.controllerId}.ControllerInfo.DateTime',
+      '${widget.controllerId}.ControllerInfo.MasterMode',
+      '${widget.controllerId}.Status',
+      '${widget.controllerId}.Module1.CurrentDraw',
+      '${widget.controllerId}.Module1.Overload',
+      '${widget.controllerId}.Module1.PathStatus',
+      '${widget.controllerId}.Module2.CurrentDraw',
+      '${widget.controllerId}.Module2.Overload',
+      '${widget.controllerId}.Module2.PathStatus',
+      '${widget.controllerId}.Module3.CurrentDraw',
+      '${widget.controllerId}.Module3.Overload',
+      '${widget.controllerId}.Module3.PathStatus',
+      '${widget.controllerId}.System.Irrigating',
+      '${widget.controllerId}.System.Shutdown',
+      '${widget.controllerId}.System.DaysOff',
+      '${widget.controllerId}.System.Suspend',
+      '${widget.controllerId}.System.Mute',
+      '${widget.controllerId}.Comm.Quality',
+      '${widget.controllerId}.Comm.LastOK',
+      '${widget.controllerId}.Comm.Retries',
+    ];
+    realtimeService.subscribe([...tagNames, ...infoTags]);
     realtimeService.start();
   }
 
@@ -71,11 +96,13 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
           indicatorColor: Colors.white,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
+          isScrollable: true,
           tabs: [
             Tab(text: l10n.stationsTab),
             Tab(text: l10n.blocksTab),
             Tab(text: l10n.alarmsTab),
             Tab(text: l10n.manualTab),
+            Tab(text: l10n.infoTab),
           ],
         ),
       ),
@@ -88,6 +115,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                 _buildBlocksTab(l10n, state, realtimeService),
                 _buildAlarmsTab(l10n),
                 _buildManualTab(l10n, state),
+                _buildInfoTab(l10n, state, realtimeService),
               ],
             ),
     );
@@ -181,10 +209,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
       children: [
         Icon(icon, color: Colors.white, size: 24),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+        Text(value, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
         Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
       ],
     );
@@ -206,28 +231,16 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                 color: isRunning ? Colors.blue.shade50 : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                Icons.water_drop,
-                color: isRunning ? Colors.blue : Colors.grey,
-                size: 22,
-              ),
+              child: Icon(Icons.water_drop, color: isRunning ? Colors.blue : Colors.grey, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${l10n.station} ${valve.stationNumber}',
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                  ),
+                  Text('${l10n.station} ${valve.stationNumber}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                   const SizedBox(height: 2),
-                  Text(
-                    valve.name,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Text(valve.name, style: TextStyle(fontSize: 12, color: Colors.grey.shade500), maxLines: 1, overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
@@ -236,11 +249,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
               children: [
                 Text(
                   isRunning ? '${flowRate.toStringAsFixed(1)} ${l10n.litersPerMinute}' : l10n.closed,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isRunning ? Colors.blue : Colors.grey.shade500,
-                  ),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isRunning ? Colors.blue : Colors.grey.shade500),
                 ),
                 const SizedBox(height: 4),
                 Container(
@@ -251,11 +260,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                   ),
                   child: Text(
                     isRunning ? l10n.irrigating : l10n.notIrrigating,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: isRunning ? Colors.blue.shade700 : Colors.grey.shade500,
-                    ),
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: isRunning ? Colors.blue.shade700 : Colors.grey.shade500),
                   ),
                 ),
               ],
@@ -312,12 +317,8 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                     Row(
                       children: [
                         Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF156082).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                          width: 40, height: 40,
+                          decoration: BoxDecoration(color: const Color(0xFF156082).withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
                           child: const Icon(Icons.view_agenda, color: Color(0xFF156082), size: 20),
                         ),
                         const SizedBox(width: 12),
@@ -325,24 +326,14 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                entry.key,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                              Text(
-                                '${entry.value.length} ${l10n.station.toLowerCase()}',
-                                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                              ),
+                              Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                              Text('${entry.value.length} ${l10n.station.toLowerCase()}', style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
                             ],
                           ),
                         ),
                         Text(
                           '$openInBlock/${entry.value.length}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: openInBlock > 0 ? Colors.blue : Colors.grey.shade500,
-                          ),
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: openInBlock > 0 ? Colors.blue : Colors.grey.shade500),
                         ),
                       ],
                     ),
@@ -355,28 +346,14 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Row(
                           children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: isRunning ? Colors.blue : Colors.grey.shade300,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
+                            Container(width: 6, height: 6, decoration: BoxDecoration(color: isRunning ? Colors.blue : Colors.grey.shade300, shape: BoxShape.circle)),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: Text(
-                                '${l10n.station} ${valve.stationNumber} - ${valve.name}',
-                                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                              ),
+                              child: Text('${l10n.station} ${valve.stationNumber} - ${valve.name}', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
                             ),
                             Text(
                               isRunning ? l10n.open : l10n.closed,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: isRunning ? Colors.blue : Colors.grey.shade400,
-                              ),
+                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: isRunning ? Colors.blue : Colors.grey.shade400),
                             ),
                           ],
                         ),
@@ -399,15 +376,9 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
         children: [
           Icon(Icons.warning_amber_rounded, size: 80, color: Colors.grey.shade200),
           const SizedBox(height: 16),
-          Text(
-            l10n.noAlarms,
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade500),
-          ),
+          Text(l10n.noAlarms, style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
           const SizedBox(height: 8),
-          Text(
-            '${l10n.alarmsTab} - ${widget.controllerId}',
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade400),
-          ),
+          Text('${l10n.alarmsTab} - ${widget.controllerId}', style: TextStyle(fontSize: 13, color: Colors.grey.shade400)),
         ],
       ),
     );
@@ -431,10 +402,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
                     children: [
                       const Icon(Icons.settings, color: Color(0xFF156082)),
                       const SizedBox(width: 8),
-                      Text(
-                        l10n.manualOperation,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
+                      Text(l10n.manualOperation, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -490,10 +458,7 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    l10n.controllerInfo,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
+                  Text(l10n.controllerInfo, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   _infoRow(l10n.controllerId, widget.controllerId),
                   const Divider(),
@@ -523,6 +488,272 @@ class _ControllerDetailPageState extends ConsumerState<ControllerDetailPage> wit
           Text(label, style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
           Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
         ],
+      ),
+    );
+  }
+
+  // --- NEW: Info Tab ---
+  Widget _buildInfoTab(AppLocalizations l10n, ControllersState state, RealtimeService realtimeService) {
+    final prefix = widget.controllerId;
+    final isACC2 = widget.controllerId == 'C001' || widget.controllerId == 'C002' || widget.controllerId == 'C003';
+
+    return StreamBuilder<Map<String, TagValue>>(
+      stream: realtimeService.tagValuesStream,
+      builder: (context, snapshot) {
+        final liveData = snapshot.data ?? realtimeService.currentValues;
+
+        final firmware = liveData['$prefix.ControllerInfo.FirmwareVersion']?.scaledValue ?? '-';
+        final ip = liveData['$prefix.ControllerInfo.IP']?.scaledValue ?? '-';
+        final dateTime = liveData['$prefix.ControllerInfo.DateTime']?.scaledValue ?? '-';
+        final masterMode = liveData['$prefix.ControllerInfo.MasterMode']?.scaledValue ?? '-';
+        final isOnline = liveData['$prefix.Status']?.scaledValue?.toLowerCase() != 'offline' &&
+            (liveData['$prefix.Status']?.scaledValue ?? '').isNotEmpty;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildControllerInfoSection(l10n, firmware, ip, dateTime, masterMode, isOnline, isACC2, state),
+              const SizedBox(height: 16),
+              _buildModuleInfoSection(l10n, realtimeService),
+              const SizedBox(height: 16),
+              _buildSystemStatusSection(l10n, realtimeService),
+              const SizedBox(height: 16),
+              _buildConnectionStatsSection(l10n, realtimeService),
+              const SizedBox(height: 24),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildControllerInfoSection(AppLocalizations l10n, String firmware, String ip, String dateTime, String masterMode, bool isOnline, bool isACC2, ControllersState state) {
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.info_outline, color: Color(0xFF156082)),
+                const SizedBox(width: 8),
+                Text(l10n.controllerInfo, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isOnline ? const Color(0xFF4CAF50).withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(width: 8, height: 8, decoration: BoxDecoration(color: isOnline ? const Color(0xFF4CAF50) : Colors.red, shape: BoxShape.circle)),
+                      const SizedBox(width: 6),
+                      Text(isOnline ? l10n.online : l10n.offline, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: isOnline ? const Color(0xFF4CAF50) : Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _infoRow(l10n.controllerTypeLabel, isACC2 ? 'ACC2' : 'ACC1'),
+            const Divider(),
+            _infoRow(l10n.firmwareVersion, firmware),
+            const Divider(),
+            _infoRow(l10n.stationSize, '${state.valves.length}'),
+            const Divider(),
+            _infoRow(l10n.currentDateTime, dateTime),
+            const Divider(),
+            _infoRow(l10n.ipAddress, ip),
+            const Divider(),
+            _infoRow(l10n.communicationProtocol, 'TCP/IP'),
+            const Divider(),
+            _infoRow(l10n.masterSlaveMode, masterMode),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModuleInfoSection(AppLocalizations l10n, RealtimeService realtimeService) {
+    final prefix = widget.controllerId;
+
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.developer_board, color: Color(0xFF156082)),
+                const SizedBox(width: 8),
+                Text(l10n.moduleInformation, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ...List.generate(3, (i) {
+              final moduleNum = i + 1;
+              final currentDraw = realtimeService.getValue('$prefix.Module$moduleNum.CurrentDraw');
+              final overload = realtimeService.getValue('$prefix.Module$moduleNum.Overload');
+              final pathStatus = realtimeService.getValue('$prefix.Module$moduleNum.PathStatus');
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F7FA),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${l10n.module} $moduleNum', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF333333))),
+                      const SizedBox(height: 8),
+                      _infoRow(l10n.currentDraw, currentDraw.isNotEmpty ? '$currentDraw A' : '-'),
+                      const SizedBox(height: 4),
+                      _infoRow(l10n.overloadStatus, overload.isNotEmpty ? (overload == '1' ? l10n.critical : l10n.normalLabel) : l10n.normalLabel),
+                      const SizedBox(height: 4),
+                      _infoRow(l10n.pathStatus, pathStatus.isNotEmpty ? (pathStatus == '1' ? l10n.activeLabel : l10n.normalLabel) : l10n.noneLabel),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSystemStatusSection(AppLocalizations l10n, RealtimeService realtimeService) {
+    final prefix = widget.controllerId;
+
+    final irrigating = realtimeService.getValue('$prefix.System.Irrigating');
+    final shutdown = realtimeService.getValue('$prefix.System.Shutdown');
+    final daysOff = realtimeService.getValue('$prefix.System.DaysOff');
+    final suspend = realtimeService.getValue('$prefix.System.Suspend');
+    final mute = realtimeService.getValue('$prefix.System.Mute');
+
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.monitor_heart, color: Color(0xFF156082)),
+                const SizedBox(width: 8),
+                Text(l10n.systemStatus, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _systemStatusRow(l10n.irrigatingStatus, irrigating, l10n),
+            const Divider(),
+            _systemStatusRow(l10n.shutdownStatus, shutdown, l10n),
+            const Divider(),
+            _systemStatusRow(l10n.daysOffStatus, daysOff, l10n),
+            const Divider(),
+            _systemStatusRow(l10n.suspendStatus, suspend, l10n),
+            const Divider(),
+            _systemStatusRow(l10n.muteStatus, mute, l10n),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _systemStatusRow(String label, String value, AppLocalizations l10n) {
+    final isActive = value == '1' || value.toLowerCase() == 'true';
+    final displayValue = value.isEmpty ? '-' : (isActive ? l10n.activeLabel : l10n.normalLabel);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? Colors.orange.withOpacity(0.1)
+                  : const Color(0xFF4CAF50).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              displayValue,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isActive ? Colors.orange.shade700 : const Color(0xFF4CAF50),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConnectionStatsSection(AppLocalizations l10n, RealtimeService realtimeService) {
+    final prefix = widget.controllerId;
+
+    final quality = realtimeService.getValue('$prefix.Comm.Quality');
+    final lastOK = realtimeService.getValue('$prefix.Comm.LastOK');
+    final retries = realtimeService.getValue('$prefix.Comm.Retries');
+
+    final qualityPercent = double.tryParse(quality) ?? 0;
+
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.wifi, color: Color(0xFF156082)),
+                const SizedBox(width: 8),
+                Text(l10n.connectionStatistics, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _infoRow(l10n.communicationQuality, quality.isNotEmpty ? '${qualityPercent.toStringAsFixed(1)}%' : '-'),
+            const SizedBox(height: 12),
+            if (qualityPercent > 0) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: qualityPercent / 100,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    qualityPercent > 80 ? const Color(0xFF4CAF50) : (qualityPercent > 50 ? Colors.orange : Colors.red),
+                  ),
+                  minHeight: 8,
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            const Divider(),
+            _infoRow(l10n.lastCommunication, lastOK.isNotEmpty ? lastOK : '-'),
+            const Divider(),
+            _infoRow(l10n.retryCount, retries.isNotEmpty ? retries : '0'),
+          ],
+        ),
       ),
     );
   }

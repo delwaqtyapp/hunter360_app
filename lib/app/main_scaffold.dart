@@ -11,7 +11,7 @@ class MainScaffold extends ConsumerWidget {
   int _getCurrentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/map')) return 1;
-    if (location.startsWith('/controllers')) return 2;
+    if (location.startsWith('/controllers') || location.startsWith('/sites')) return 2;
     if (location.startsWith('/schedules')) return 3;
     if (location.startsWith('/alarms') || location.startsWith('/diagnostics') || location.startsWith('/operation')) return 4;
     return 0;
@@ -58,17 +58,25 @@ class MainScaffold extends ConsumerWidget {
             _drawerItem(context, Icons.dashboard, l10n.dashboard, '/'),
             const Divider(),
             _drawerItem(context, Icons.map, l10n.mapControl, '/map'),
+            _drawerItem(context, Icons.location_city, l10n.sitesTitle, '/sites'),
             _drawerItem(context, Icons.settings_input_antenna, l10n.controllers, '/controllers'),
             _drawerItem(context, Icons.schedule, l10n.schedules, '/schedules'),
+            _drawerItem(context, Icons.edit_calendar, l10n.scheduleEditorTitle, '/schedules/editor'),
+            const Divider(),
             _drawerItem(context, Icons.water, l10n.flowManagement, '/flow'),
             _drawerItem(context, Icons.wb_sunny, l10n.weather, '/weather'),
+            _drawerItem(context, Icons.sync, l10n.solarSyncTitle, '/weather/solar-sync'),
+            _drawerItem(context, Icons.grass, l10n.etCalculationTitle, '/weather/et'),
             const Divider(),
             _drawerItem(context, Icons.warning, l10n.alarms, '/alarms'),
+            _drawerItem(context, Icons.history, l10n.alarmHistoryTitle, '/alarms/history'),
             _drawerItem(context, Icons.medical_information, l10n.diagnostics, '/diagnostics'),
             _drawerItem(context, Icons.play_circle, l10n.operationCommands, '/operation-commands'),
             _drawerItem(context, Icons.info, l10n.operationStatus, '/operation-status'),
             const Divider(),
+            _drawerItem(context, Icons.trending_up, l10n.trendTitle, '/trends'),
             _drawerItem(context, Icons.assessment, l10n.reports, '/reports'),
+            _drawerItem(context, Icons.security, l10n.securityTitle, '/security'),
             _drawerItem(context, Icons.settings, l10n.settings, '/settings'),
             const Divider(),
             ListTile(

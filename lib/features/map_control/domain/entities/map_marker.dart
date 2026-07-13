@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+enum MarkerType { site, controller, station, flowSensor, pmv }
+
 class MapMarker extends Equatable {
   final String id;
   final String controllerId;
@@ -8,6 +10,9 @@ class MapMarker extends Equatable {
   final double longitude;
   final String status;
   final int activeValves;
+  final MarkerType type;
+  final String description;
+  final String parentController;
 
   const MapMarker({
     required this.id,
@@ -17,10 +22,22 @@ class MapMarker extends Equatable {
     required this.longitude,
     required this.status,
     this.activeValves = 0,
+    this.type = MarkerType.site,
+    this.description = '',
+    this.parentController = '',
   });
 
   bool get isOnline => status == 'online';
 
   @override
-  List<Object?> get props => [id, controllerId, name, latitude, longitude, status];
+  List<Object?> get props => [
+        id,
+        controllerId,
+        name,
+        latitude,
+        longitude,
+        status,
+        type,
+        activeValves,
+      ];
 }
