@@ -11,31 +11,28 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
-    // Try the legacy endpoint first (matches desktop login.js exactly)
+    // Try legacy endpoint first (matches desktop login.js exactly - sends JSON.stringify body)
     try {
       final response = await _apiClient.post(
         ApiConstants.authenticate,
-        data: {'username': username, 'userpassword': password},
-        contentType: 'application/x-www-form-urlencoded',
+        data: jsonEncode({'username': username, 'userpassword': password}),
       );
 
       final raw = response.data;
       if (raw is String && raw.isNotEmpty) {
-        // Response is a plain text string (JWT or JSON string)
         return _parseAuthResponse(raw);
       }
       if (raw is Map) {
         return Map<String, dynamic>.from(raw);
       }
       if (raw is List) {
-        // Some servers return the auth data as a list with one element
         if (raw.isNotEmpty && raw.first is Map) {
           return Map<String, dynamic>.from(raw.first);
         }
       }
       return {'Token': raw?.toString() ?? ''};
     } catch (e) {
-      // Try the new endpoint
+      // Try the newer endpoint
       try {
         final response = await _apiClient.post(
           '/api/Authenticate',
@@ -57,12 +54,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   Map<String, dynamic> _parseAuthResponse(String raw) {
-    // Try parsing as JSON
     try {
-      final parsed = Map<String, dynamic>.from(
-        Map<String, dynamic>.from(_simpleJsonDecode(raw)),
-      );
-      // Check if it has the expected auth fields
+      final parsed = Map<String, dynamic>.from(_simpleJsonDecode(raw));
       if (parsed.containsKey('Token') ||
           parsed.containsKey('UserName') ||
           parsed.containsKey('Roles') ||
@@ -71,13 +64,11 @@ class AuthRepositoryImpl implements AuthRepository {
       }
     } catch (_) {}
 
-    // Check if it's a bare JWT token
     final jwtRegex = RegExp(r'^eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+$');
     if (jwtRegex.hasMatch(raw.trim())) {
       return {'Token': raw.trim()};
     }
 
-    // Return as-is
     return {'Token': raw};
   }
 
@@ -87,8 +78,7 @@ class AuthRepositoryImpl implements AuthRepository {
       trimmed = trimmed.substring(1, trimmed.length - 1);
     }
     try {
-      final decoded = jsonDecode(trimmed);
-      return decoded;
+      return jsonDecode(trimmed);
     } catch (_) {}
     return trimmed;
   }

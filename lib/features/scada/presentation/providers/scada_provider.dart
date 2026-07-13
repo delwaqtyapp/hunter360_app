@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
 import 'package:hunter360_app/core/services/realtime_service.dart';
+import 'package:hunter360_app/core/utils/response_parser.dart';
 
 class ScadaState {
   final String selectedController;
@@ -155,10 +156,9 @@ class ScadaNotifier extends StateNotifier<ScadaState> {
   Future<void> _loadAlarms() async {
     try {
       final response = await _apiClient.get(ApiConstants.alarmsCurrent);
-      final data = response.data;
-      final List alarmsList = (data is Map) ? (data['Alarms'] ?? data['Data'] ?? []) : [];
-      final filtered = alarmsList.where((a) => a['TagGroup']?.toString() == state.selectedController).toList();
-      state = state.copyWith(alarms: List<Map<String, dynamic>>.from(filtered));
+      final alarms = ResponseParser.parseAlarmsList(response.data);
+      final filtered = alarms.where((a) => a['TagGroup']?.toString() == state.selectedController).toList();
+      state = state.copyWith(alarms: filtered);
     } catch (_) {}
   }
 

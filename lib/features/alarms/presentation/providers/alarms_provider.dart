@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
+import 'package:hunter360_app/core/utils/response_parser.dart';
 
 class AlarmEntity {
   final String id;
@@ -151,17 +152,8 @@ class AlarmsNotifier extends StateNotifier<AlarmsState> {
     );
     try {
       final response = await _apiClient.get(ApiConstants.alarmsCurrent);
-      final data = response.data;
-      final List<dynamic> alarmsList;
-      if (data is Map) {
-        alarmsList = data['Alarms'] ?? data['Data'] ?? [];
-      } else if (data is List) {
-        alarmsList = data;
-      } else {
-        alarmsList = [];
-      }
-      final alarms = alarmsList
-          .map((json) => AlarmEntity.fromJson(json as Map<String, dynamic>))
+      final alarms = ResponseParser.parseAlarmsList(response.data)
+          .map((json) => AlarmEntity.fromJson(json))
           .toList();
       state = AlarmsState(
         alarms: alarms,

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
+import 'package:hunter360_app/core/utils/response_parser.dart';
 
 enum ScheduleType { weekly, oddEven, interval, manual }
 
@@ -242,7 +243,7 @@ class SchedulesNotifier extends StateNotifier<AsyncValue<List<ScheduleEntity>>> 
     state = const AsyncValue.loading();
     try {
       final response = await _apiClient.get(ApiConstants.tagsList);
-      final tags = response.data as List<dynamic>;
+      final tags = ResponseParser.parseTagsList(response.data);
       final programs = _filterProgramTags(tags, controllerId);
       state = AsyncValue.data(programs);
     } catch (e, stack) {
@@ -250,17 +251,17 @@ class SchedulesNotifier extends StateNotifier<AsyncValue<List<ScheduleEntity>>> 
     }
   }
 
-  List<ScheduleEntity> _filterProgramTags(List<dynamic> tags, String controllerId) {
+  List<ScheduleEntity> _filterProgramTags(List<Map<String, dynamic>> tags, String controllerId) {
     final programTags = tags.where((tag) {
-      final name = tag['name'] as String? ?? '';
+      final name = tag['Name']?.toString() ?? tag['TagName']?.toString() ?? '';
       return name.contains('Program') && name.contains(controllerId);
     }).toList();
 
     final Map<int, Map<String, dynamic>> programMap = {};
 
     for (final tag in programTags) {
-      final name = tag['name'] as String;
-      final value = tag['value'];
+      final name = tag['Name']?.toString() ?? tag['TagName']?.toString() ?? '';
+      final value = tag['ScaledValue'] ?? tag['Value'] ?? tag['value'];
       final programNum = _extractProgramNumber(name);
 
       if (programNum != null) {

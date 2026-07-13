@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
+import 'package:hunter360_app/core/utils/response_parser.dart';
 
 class HistoricalAlarm {
   final String id;
@@ -154,32 +155,24 @@ class AlarmHistoryNotifier extends StateNotifier<AlarmHistoryState> {
   Future<void> loadAlarms() async {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      final queryParams = <String, dynamic>{};
+      final queryParams = <String, dynamic>{
+        'TagFilter': state.controllerFilter.isNotEmpty ? state.controllerFilter : '*',
+        'PriFrom': '1',
+        'PriTo': '6',
+      };
       if (state.startDate != null) {
-        queryParams['startDate'] = state.startDate!.toIso8601String();
+        queryParams['StartDate'] = state.startDate!.toIso8601String().substring(0, 19);
       }
       if (state.endDate != null) {
-        queryParams['endDate'] = state.endDate!.toIso8601String();
-      }
-      if (state.controllerFilter.isNotEmpty) {
-        queryParams['controller'] = state.controllerFilter;
+        queryParams['EndDate'] = state.endDate!.toIso8601String().substring(0, 19);
       }
 
       final response = await _apiClient.get(
         ApiConstants.historicalAlarms,
-        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+        queryParameters: queryParams,
       );
-      final data = response.data;
-      final List<dynamic> alarmsList;
-      if (data is Map) {
-        alarmsList = data['Alarms'] ?? data['Data'] ?? [];
-      } else if (data is List) {
-        alarmsList = data;
-      } else {
-        alarmsList = [];
-      }
-      final alarms = alarmsList
-          .map((json) => HistoricalAlarm.fromJson(json as Map<String, dynamic>))
+      final alarms = ResponseParser.parseAlarmsList(response.data)
+          .map((json) => HistoricalAlarm.fromJson(json))
           .toList();
       state = state.copyWith(alarms: alarms, isLoading: false);
     } catch (e) {

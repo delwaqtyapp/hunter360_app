@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
+import 'package:hunter360_app/core/utils/response_parser.dart';
 
 enum ReportPeriod { daily, weekly, monthly, yearly }
 
@@ -97,27 +98,23 @@ class ReportsNotifier extends StateNotifier<ReportsState> {
     state = state.copyWith(isLoading: true);
     try {
       final tagNames = List.generate(6, (i) => _getFlowTag(i));
-      final query = tagNames.map((t) => 'TagName=$t').join('&');
-      final url = '${ApiConstants.tagsValuesList}?$query';
-
-      final response = await _apiClient.get(url);
-      final data = response.data;
-
-      final Map<String, dynamic> tagsMap = Map<String, dynamic>.from(
-        data is Map ? data : {},
+      final response = await _apiClient.post(
+        ApiConstants.tagsValuesList,
+        data: tagNames,
       );
-      final List tags = (tagsMap['Tags'] ?? tagsMap['Data'] ?? []) as List;
+      final data = response.data;
+      final values = ResponseParser.parseTagValuesList(data);
 
       double total = 0;
       final zoneData = <ZoneFlowData>[];
 
       for (int i = 0; i < 6; i++) {
         double value = 0;
-        for (final tag in tags) {
-          final tagMap = Map<String, dynamic>.from(tag is Map ? tag : {});
-          final name = tagMap['Name']?.toString() ?? tagMap['TagName']?.toString() ?? '';
-          if (name.contains('FlowSensor${i + 1}')) {
-            value = (tagMap['Value'] ?? tagMap['RawValue'] ?? 0).toDouble();
+        final expectedTag = tagNames[i];
+        for (final v in values) {
+          final name = v['TagName']?.toString() ?? '';
+          if (name == expectedTag || name.contains('FlowSensor${i + 1}')) {
+            value = double.tryParse(v['ScaledValue']?.toString() ?? '') ?? 0.0;
             break;
           }
         }

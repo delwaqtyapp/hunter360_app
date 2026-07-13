@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hunter360_app/features/controllers/domain/entities/valve.dart';
 import 'package:hunter360_app/core/constants/api_constants.dart';
 import 'package:hunter360_app/core/network/api_client.dart';
+import 'package:hunter360_app/core/utils/response_parser.dart';
 
 class IrrigationController {
   final String id;
@@ -81,14 +82,15 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
     state = state.copyWith(isLoading: true);
     try {
       final response = await _apiClient.get(ApiConstants.tagsList);
-      final data = response.data;
-      final Map<String, dynamic> tagsMap = Map<String, dynamic>.from(data is Map ? data : {});
-      final List tags = (tagsMap['Tags'] ?? tagsMap['Data'] ?? []) as List;
+      final tags = ResponseParser.parseTagsList(response.data);
       final controllerMap = <String, IrrigationController>{};
 
       for (final tag in tags) {
-        final tagMap = Map<String, dynamic>.from(tag is Map ? tag : {});
-        final group = tagMap['Group']?.toString() ?? '';
+        var group = tag['Group']?.toString() ?? '';
+        if (group.isEmpty) {
+          final tagName = tag['TagName']?.toString() ?? '';
+          group = ResponseParser.extractGroupId(tagName);
+        }
         if (group.isEmpty) continue;
 
         if (!controllerMap.containsKey(group)) {
@@ -126,23 +128,24 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
     state = state.copyWith(isLoading: true, selectedControllerId: controllerId);
     try {
       final response = await _apiClient.get(ApiConstants.tagsList);
-      final data = response.data;
-      final Map<String, dynamic> tagsMap = Map<String, dynamic>.from(data is Map ? data : {});
-      final List tags = (tagsMap['Tags'] ?? tagsMap['Data'] ?? []) as List;
+      final tags = ResponseParser.parseTagsList(response.data);
       final stations = <Map<String, dynamic>>[];
       final blocks = <Map<String, dynamic>>[];
       final valves = <Valve>[];
       int stationNum = 1;
 
       for (final tag in tags) {
-        final tagMap = Map<String, dynamic>.from(tag is Map ? tag : {});
-        final name = tagMap['Name']?.toString() ?? tagMap['TagName']?.toString() ?? '';
-        final group = tagMap['Group']?.toString() ?? '';
+        var group = tag['Group']?.toString() ?? '';
+        if (group.isEmpty) {
+          final tagName = tag['TagName']?.toString() ?? '';
+          group = ResponseParser.extractGroupId(tagName);
+        }
         if (group != controllerId) continue;
 
+        final name = tag['Name']?.toString() ?? tag['TagName']?.toString() ?? '';
         final lowerName = name.toLowerCase();
         if (lowerName.contains('station')) {
-          stations.add(tagMap);
+          stations.add(tag);
           valves.add(Valve(
             id: name,
             stationNumber: stationNum++,
@@ -150,7 +153,7 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
             status: 'closed',
           ));
         } else if (lowerName.contains('block')) {
-          blocks.add(tagMap);
+          blocks.add(tag);
         }
       }
 
@@ -182,7 +185,10 @@ class ControllersNotifier extends StateNotifier<ControllersState> {
     );
     final newStatus = currentValve.status == 'open' ? 'closed' : 'open';
     try {
-      await _apiClient.get(ApiConstants.tagValue(valveId));
+      await _apiClient.post(
+        ApiConstants.tagsWrite,
+        data: [{'TagName': valveId, 'RawValue': newStatus == 'open' ? '1' : '0'}],
+      );
       state = state.copyWith(
         valves: state.valves.map((v) => v.id == valveId
             ? v.copyWith(status: newStatus, flowRate: newStatus == 'open' ? 15.5 : 0)
