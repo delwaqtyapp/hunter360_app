@@ -72,50 +72,37 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: CustomScrollView(
         slivers: [
-          if (dashState.isLoading && !dashState.isConnected)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          if (dashState.error != null && !dashState.isConnected)
+            SliverToBoxAdapter(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                color: AppTheme.errorColor.withOpacity(0.15),
+                child: Row(
                   children: [
-                    const CircularProgressIndicator(color: AppTheme.primaryColor),
-                    const SizedBox(height: 16),
-                    Text('Connecting to server...', style: TextStyle(color: Colors.white70)),
-                  ],
-                ),
-              ),
-            )
-          else if (dashState.error != null && !dashState.isConnected)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.cloud_off_rounded, color: AppTheme.errorColor, size: 48),
-                    const SizedBox(height: 16),
-                    Text('Connection Error', style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Text(dashState.error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70, fontSize: 13)),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () => ref.read(dashboardProvider.notifier).loadDashboard(),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Retry'),
-                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
+                    const Icon(Icons.cloud_off_rounded, color: AppTheme.errorColor, size: 18),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        l10n.serverUnavailable,
+                        style: const TextStyle(color: AppTheme.errorColor, fontSize: 12, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => ref.read(dashboardProvider.notifier).loadDashboard(),
+                      child: Text(l10n.retry, style: const TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold, fontSize: 12)),
                     ),
                   ],
                 ),
               ),
-            )
-          else ...[
-            SliverToBoxAdapter(child: _buildHeader(l10n, isArabic, dashState)),
-            SliverToBoxAdapter(child: _buildSystemStatusRow(l10n, dashState)),
-            SliverToBoxAdapter(child: _buildControllerCards(l10n, controllersState, dashState)),
-            SliverToBoxAdapter(child: _buildFlowMetersSection(l10n, dashState)),
-            SliverToBoxAdapter(child: _buildQuickActions(l10n)),
-            SliverToBoxAdapter(child: _buildRecentAlarms(l10n, alarmsState)),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          ],
+            ),
+          SliverToBoxAdapter(child: _buildHeader(l10n, isArabic, dashState)),
+          SliverToBoxAdapter(child: _buildSystemStatusRow(l10n, dashState)),
+          SliverToBoxAdapter(child: _buildControllerCards(l10n, controllersState, dashState)),
+          SliverToBoxAdapter(child: _buildFlowMetersSection(l10n, dashState)),
+          SliverToBoxAdapter(child: _buildQuickActions(l10n)),
+          SliverToBoxAdapter(child: _buildRecentAlarms(l10n, alarmsState)),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );

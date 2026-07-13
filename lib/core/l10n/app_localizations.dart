@@ -111,6 +111,7 @@ class AppLocalizations {
   String get loading => isArabic ? 'جاري التحميل...' : 'Loading...';
   String get error => isArabic ? 'خطأ' : 'Error';
   String get retry => isArabic ? 'إعادة المحاولة' : 'Retry';
+  String get serverUnavailable => isArabic ? 'السيرفر غير متاح - تحقق من اتصال VPN' : 'Server unavailable - check VPN connection';
   String get connect => isArabic ? 'اتصال' : 'Connect';
   String get connected => isArabic ? 'متصل بالسيرفر' : 'Connected to server';
   String get disconnected => isArabic ? 'غير متصل' : 'Disconnected';
