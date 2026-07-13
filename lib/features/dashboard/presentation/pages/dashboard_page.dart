@@ -41,7 +41,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF156082), Color(0xFF1B5E20)]),
+              gradient: const LinearGradient(colors: [Color(0xFF0D3B4F), Color(0xFF156082)]),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -49,14 +49,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: Colors.white.withOpacity(0.2),
-                  child: const Text('H', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: const Text('A', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Hunter 360', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text('Abqarino SCADA', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                       Text(DateFormat('EEE, MMM dd, yyyy').format(DateTime.now()), style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
                     ],
                   ),
@@ -67,10 +67,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           ),
           const SizedBox(height: 20),
           if (dashboardState.isLoading)
-            const Center(child: Padding(
-              padding: EdgeInsets.all(40),
-              child: CircularProgressIndicator(color: Color(0xFF1B5E20)),
-            ))
+            const Center(child: Padding(padding: EdgeInsets.all(40), child: CircularProgressIndicator(color: Color(0xFF156082))))
           else ...[
             GridView.count(
               crossAxisCount: 2,
@@ -81,8 +78,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               childAspectRatio: 1.4,
               children: [
                 _statCard(Icons.settings_input_antenna, 'Controllers', '${dashboardState.controllers.length}', 'Active', const Color(0xFF4CAF50), () => context.go('/controllers')),
-                _statCard(Icons.warning_amber, 'Active Alarms', '${dashboardState.activeAlarms}', 'Current', dashboardState.activeAlarms > 0 ? const Color(0xFFF44336) : const Color(0xFF4CAF50), () => context.go('/alarms')),
-                _statCard(Icons.tag, 'Total Tags', '${dashboardState.totalTags}', 'Registered', const Color(0xFF2196F3), () => context.go('/controllers')),
+                _statCard(Icons.warning_amber, 'Alarms', '${dashboardState.activeAlarms}', 'Current', dashboardState.activeAlarms > 0 ? const Color(0xFFF44336) : const Color(0xFF4CAF50), () => context.go('/alarms')),
+                _statCard(Icons.tag, 'Tags', '${dashboardState.totalTags}', 'Registered', const Color(0xFF2196F3), () => context.go('/controllers')),
                 _statCard(Icons.view_list, 'Views', '3', 'Available', const Color(0xFFFF9800), () => context.go('/reports')),
               ],
             ),
@@ -94,12 +91,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _quickAction(Icons.map, 'Map View', () => context.go('/map')),
+              _quickAction(Icons.medical_information, 'Diagnostics', () => context.go('/diagnostics')),
+              _quickAction(Icons.play_circle, 'Commands', () => context.go('/operation-commands')),
+              _quickAction(Icons.info, 'Status', () => context.go('/operation-status')),
+              _quickAction(Icons.map, 'Map', () => context.go('/map')),
               _quickAction(Icons.schedule, 'Schedules', () => context.go('/schedules')),
-              _quickAction(Icons.assessment, 'Reports', () => context.go('/reports')),
-              _quickAction(Icons.water, 'Flow Mgmt', () => context.go('/flow')),
-              _quickAction(Icons.devices, 'Devices', () => context.go('/controllers')),
-              _quickAction(Icons.settings, 'Settings', () => context.go('/settings')),
+              _quickAction(Icons.water, 'Flow', () => context.go('/flow')),
             ],
           ),
           const SizedBox(height: 20),
@@ -108,10 +105,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             const SizedBox(height: 8),
             ...controllersState.controllers.map((c) => Card(
               child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: const Color(0xFF1B5E20).withOpacity(0.1),
-                  child: const Icon(Icons.settings_input_antenna, color: Color(0xFF1B5E20)),
-                ),
+                leading: CircleAvatar(backgroundColor: const Color(0xFF156082).withOpacity(0.1), child: const Icon(Icons.settings_input_antenna, color: Color(0xFF156082))),
                 title: Text('${c.name} (${c.displayName})'),
                 subtitle: Text('${c.tagCount} tags'),
                 trailing: const Icon(Icons.chevron_right),
@@ -134,12 +128,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             if (alarmsState.alarms.length > 5)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Center(
-                  child: TextButton(
-                    onPressed: () => context.go('/alarms'),
-                    child: const Text('View All Alarms'),
-                  ),
-                ),
+                child: Center(child: TextButton(onPressed: () => context.go('/alarms'), child: const Text('View All Alarms'))),
               ),
           ],
         ],
@@ -148,7 +137,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Widget _sectionHeader(String title) {
-    return Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1B5E20)));
+    return Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF156082)));
   }
 
   Widget _statCard(IconData icon, String title, String value, String subtitle, Color color, VoidCallback onTap) {
@@ -183,17 +172,15 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         width: 100,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFF1B5E20).withOpacity(0.05),
+          color: const Color(0xFF156082).withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF1B5E20).withOpacity(0.2)),
+          border: Border.all(color: const Color(0xFF156082).withOpacity(0.2)),
         ),
-        child: Column(
-          children: [
-            Icon(icon, color: const Color(0xFF1B5E20), size: 28),
-            const SizedBox(height: 4),
-            Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
-          ],
-        ),
+        child: Column(children: [
+          Icon(icon, color: const Color(0xFF156082), size: 28),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
+        ]),
       ),
     );
   }

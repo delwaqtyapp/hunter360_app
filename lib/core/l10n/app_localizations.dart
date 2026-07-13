@@ -9,270 +9,91 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   static const List<Locale> supportedLocales = [
     Locale('ar'),
     Locale('en'),
-    Locale('es'),
-    Locale('it'),
-    Locale('fr'),
-    Locale('pt'),
-    Locale('de'),
-    Locale('tr'),
-    Locale('pl'),
-    Locale('ru'),
-    Locale('cs'),
-    Locale('ja'),
-    Locale('zh'),
   ];
 
-  String get appName {
-    switch (locale.languageCode) {
-      case 'ar': return 'هنتر 360';
-      case 'en': return 'Hunter 360';
-      case 'es': return 'Hunter 360';
-      case 'it': return 'Hunter 360';
-      case 'fr': return 'Hunter 360';
-      case 'pt': return 'Hunter 360';
-      case 'de': return 'Hunter 360';
-      case 'tr': return 'Hunter 360';
-      case 'pl': return 'Hunter 360';
-      case 'ru': return 'Hunter 360';
-      case 'cs': return 'Hunter 360';
-      case 'ja': return 'ハンター360';
-      case 'zh': return 'Hunter 360';
-      default: return 'Hunter 360';
-    }
-  }
+  bool get isArabic => locale.languageCode == 'ar';
 
-  String get login {
-    switch (locale.languageCode) {
-      case 'ar': return 'تسجيل الدخول';
-      case 'en': return 'Login';
-      case 'es': return 'Iniciar sesión';
-      case 'it': return 'Accedi';
-      case 'fr': return 'Connexion';
-      case 'pt': return 'Entrar';
-      case 'de': return 'Anmelden';
-      case 'tr': return 'Giriş yap';
-      case 'pl': return 'Zaloguj się';
-      case 'ru': return 'Войти';
-      case 'cs': return 'Přihlásit se';
-      case 'ja': return 'ログイン';
-      case 'zh': return '登录';
-      default: return 'Login';
-    }
-  }
-
-  String get password {
-    switch (locale.languageCode) {
-      case 'ar': return 'كلمة المرور';
-      case 'en': return 'Password';
-      default: return 'Password';
-    }
-  }
-
-  String get email {
-    switch (locale.languageCode) {
-      case 'ar': return 'البريد الإلكتروني';
-      case 'en': return 'Email';
-      default: return 'Email';
-    }
-  }
-
-  String get dashboard {
-    switch (locale.languageCode) {
-      case 'ar': return 'لوحة التحكم';
-      case 'en': return 'Dashboard';
-      default: return 'Dashboard';
-    }
-  }
-
-  String get controllers {
-    switch (locale.languageCode) {
-      case 'ar': return 'وحدات التحكم';
-      case 'en': return 'Controllers';
-      default: return 'Controllers';
-    }
-  }
-
-  String get schedules {
-    switch (locale.languageCode) {
-      case 'ar': return 'جداول الري';
-      case 'en': return 'Schedules';
-      default: return 'Schedules';
-    }
-  }
-
-  String get alarms {
-    switch (locale.languageCode) {
-      case 'ar': return 'الإنذارات';
-      case 'en': return 'Alarms';
-      default: return 'Alarms';
-    }
-  }
-
-  String get settings {
-    switch (locale.languageCode) {
-      case 'ar': return 'الإعدادات';
-      case 'en': return 'Settings';
-      default: return 'Settings';
-    }
-  }
-
-  String get map {
-    switch (locale.languageCode) {
-      case 'ar': return 'الخريطة';
-      case 'en': return 'Map';
-      default: return 'Map';
-    }
-  }
-
-  String get weather {
-    switch (locale.languageCode) {
-      case 'ar': return 'الطقس';
-      case 'en': return 'Weather';
-      default: return 'Weather';
-    }
-  }
-
-  String get flowManagement {
-    switch (locale.languageCode) {
-      case 'ar': return 'إدارة التدفق';
-      case 'en': return 'Flow Management';
-      default: return 'Flow Management';
-    }
-  }
-
-  String get reports {
-    switch (locale.languageCode) {
-      case 'ar': return 'التقارير';
-      case 'en': return 'Reports';
-      default: return 'Reports';
-    }
-  }
-
-  String get logout {
-    switch (locale.languageCode) {
-      case 'ar': return 'تسجيل الخروج';
-      case 'en': return 'Logout';
-      default: return 'Logout';
-    }
-  }
-
-  String get online {
-    switch (locale.languageCode) {
-      case 'ar': return 'متصل';
-      case 'en': return 'Online';
-      default: return 'Online';
-    }
-  }
-
-  String get offline {
-    switch (locale.languageCode) {
-      case 'ar': return 'غير متصل';
-      case 'en': return 'Offline';
-      default: return 'Offline';
-    }
-  }
-
-  String get manualOperation {
-    switch (locale.languageCode) {
-      case 'ar': return 'التشغيل اليدوي';
-      case 'en': return 'Manual Operation';
-      default: return 'Manual Operation';
-    }
-  }
-
-  String get start {
-    switch (locale.languageCode) {
-      case 'ar': return 'تشغيل';
-      case 'en': return 'Start';
-      default: return 'Start';
-    }
-  }
-
-  String get stop {
-    switch (locale.languageCode) {
-      case 'ar': return 'إيقاف';
-      case 'en': return 'Stop';
-      default: return 'Stop';
-    }
-  }
-
-  String get save {
-    switch (locale.languageCode) {
-      case 'ar': return 'حفظ';
-      case 'en': return 'Save';
-      default: return 'Save';
-    }
-  }
-
-  String get cancel {
-    switch (locale.languageCode) {
-      case 'ar': return 'إلغاء';
-      case 'en': return 'Cancel';
-      default: return 'Cancel';
-    }
-  }
-
-  String get confirm {
-    switch (locale.languageCode) {
-      case 'ar': return 'تأكيد';
-      case 'en': return 'Confirm';
-      default: return 'Confirm';
-    }
-  }
-
-  String get noData {
-    switch (locale.languageCode) {
-      case 'ar': return 'لا توجد بيانات';
-      case 'en': return 'No data available';
-      default: return 'No data available';
-    }
-  }
-
-  String get loading {
-    switch (locale.languageCode) {
-      case 'ar': return 'جاري التحميل...';
-      case 'en': return 'Loading...';
-      default: return 'Loading...';
-    }
-  }
-
-  String get error {
-    switch (locale.languageCode) {
-      case 'ar': return 'خطأ';
-      case 'en': return 'Error';
-      default: return 'Error';
-    }
-  }
-
-  String get retry {
-    switch (locale.languageCode) {
-      case 'ar': return 'إعادة المحاولة';
-      case 'en': return 'Retry';
-      default: return 'Retry';
-    }
-  }
+  String get appName => isArabic ? 'عبقرينو سكادا' : 'Abqarino SCADA';
+  String get login => isArabic ? 'تسجيل الدخول' : 'Login';
+  String get username => isArabic ? 'اسم المستخدم' : 'Username';
+  String get password => isArabic ? 'كلمة المرور' : 'Password';
+  String get signIn => isArabic ? 'دخول' : 'SIGN IN';
+  String get serverUrl => isArabic ? 'رابط السيرفر' : 'Server URL';
+  String get serverConfig => isArabic ? 'إعدادات السيرفر' : 'Server Configuration';
+  String get dashboard => isArabic ? 'لوحة التحكم' : 'Dashboard';
+  String get controllers => isArabic ? 'وحدات التحكم' : 'Controllers';
+  String get diagnostics => isArabic ? 'التشخيص' : 'Diagnostics';
+  String get operationCommands => isArabic ? 'أوامر التشغيل' : 'Operation Commands';
+  String get operationStatus => isArabic ? 'حالة التشغيل' : 'Operation Status';
+  String get schedules => isArabic ? 'جداول الري' : 'Schedules';
+  String get alarms => isArabic ? 'الإنذارات' : 'Alarms';
+  String get settings => isArabic ? 'الإعدادات' : 'Settings';
+  String get map => isArabic ? 'الخريطة' : 'Map';
+  String get weather => isArabic ? 'الطقس' : 'Weather';
+  String get flowManagement => isArabic ? 'إدارة التدفق' : 'Flow Management';
+  String get reports => isArabic ? 'التقارير' : 'Reports';
+  String get logout => isArabic ? 'تسجيل الخروج' : 'Logout';
+  String get online => isArabic ? 'متصل' : 'Online';
+  String get offline => isArabic ? 'غير متصل' : 'Offline';
+  String get manualOperation => isArabic ? 'التشغيل اليدوي' : 'Manual Operation';
+  String get start => isArabic ? 'تشغيل' : 'Start';
+  String get stop => isArabic ? 'إيقاف' : 'Stop';
+  String get save => isArabic ? 'حفظ' : 'Save';
+  String get cancel => isArabic ? 'إلغاء' : 'Cancel';
+  String get confirm => isArabic ? 'تأكيد' : 'Confirm';
+  String get noData => isArabic ? 'لا توجد بيانات' : 'No data available';
+  String get loading => isArabic ? 'جاري التحميل...' : 'Loading...';
+  String get error => isArabic ? 'خطأ' : 'Error';
+  String get retry => isArabic ? 'إعادة المحاولة' : 'Retry';
+  String get connect => isArabic ? 'اتصال' : 'Connect';
+  String get connected => isArabic ? 'متصل بالسيرفر' : 'Connected to server';
+  String get disconnected => isArabic ? 'غير متصل' : 'Disconnected';
+  String get masterValves => isArabic ? 'الصمامات الرئيسية' : 'Master Valves';
+  String get totalActive => isArabic ? 'الإجمالي النشط' : 'Total Active';
+  String get activeAlarms => isArabic ? 'الإنذارات النشطة' : 'Active Alarms';
+  String get totalTags => isArabic ? 'إجمالي العلامات' : 'Total Tags';
+  String get views => isArabic ? 'العروض' : 'Views';
+  String get recentAlarms => isArabic ? 'آخر الإنذارات' : 'Recent Alarms';
+  String get quickActions => isArabic ? 'إجراءات سريعة' : 'Quick Actions';
+  String get controllersList => isArabic ? 'قائمة وحدات التحكم' : 'Controllers List';
+  String get tags => isArabic ? 'علامات' : 'tags';
+  String get license => isArabic ? 'الرخصة' : 'License';
+  String get uploadLicense => isArabic ? 'رفع الرخصة' : 'Upload License';
+  String get licensedTo => isArabic ? 'مرخص لـ' : 'Licensed to';
+  String get poweredBy => isArabic ? '.powered by Abqarino Technology' : 'Powered by Abqarino Technology';
+  String get version => isArabic ? 'الإصدار' : 'Version';
+  String get deviceType => isArabic ? 'نوع الجهاز' : 'Device Type';
+  String get station => isArabic ? 'محطة' : 'Station';
+  String get block => isArabic ? 'بلوك' : 'Block';
+  String get pmv => isArabic ? 'صمام' : 'P/MV';
+  String get startEvent => isArabic ? 'بدء الحدث' : 'Start Event';
+  String get selectController => isArabic ? 'اختر الوحدة' : 'Select Controller';
+  String get irrigating => isArabic ? 'يروي' : 'Irrigating';
+  String get notIrrigating => isArabic ? 'لا يروي' : 'Not Irrigating';
+  String get darkMode => isArabic ? 'الوضع الداكن' : 'Dark Mode';
+  String get language => isArabic ? 'اللغة' : 'Language';
+  String get arabic => isArabic ? 'العربية' : 'Arabic';
+  String get english => isArabic ? 'الإنجليزية' : 'English';
+  String get noAlarms => isArabic ? 'لا توجد إنذارات' : 'No alarms';
+  String get all => isArabic ? 'الكل' : 'All';
+  String get critical => isArabic ? 'حرج' : 'Critical';
+  String get warning => isArabic ? 'تحذير' : 'Warning';
+  String get info => isArabic ? 'معلومات' : 'Info';
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) {
-    return ['ar', 'en', 'es', 'it', 'fr', 'pt', 'de', 'tr', 'pl', 'ru', 'cs', 'ja', 'zh']
-        .contains(locale.languageCode);
-  }
+  bool isSupported(Locale locale) => ['ar', 'en'].contains(locale.languageCode);
 
   @override
-  Future<AppLocalizations> load(Locale locale) async {
-    return AppLocalizations(locale);
-  }
+  Future<AppLocalizations> load(Locale locale) async => AppLocalizations(locale);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;

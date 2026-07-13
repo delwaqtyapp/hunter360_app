@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/l10n/app_localizations.dart';
 import '../core/theme/app_theme.dart';
@@ -13,14 +14,18 @@ class Hunter360App extends ConsumerWidget {
     final isDarkMode = ref.watch(themeModeProvider);
 
     return MaterialApp.router(
-      title: 'Hunter 360',
+      title: 'Abqarino SCADA',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme(),
       darkTheme: AppTheme.darkTheme(),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: router,
+      locale: ref.watch(localeProvider),
       localizationsDelegates: const [
         AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
     );
@@ -28,3 +33,4 @@ class Hunter360App extends ConsumerWidget {
 }
 
 final themeModeProvider = StateProvider<bool>((ref) => false);
+final localeProvider = StateProvider<Locale>((ref) => const Locale('en'));

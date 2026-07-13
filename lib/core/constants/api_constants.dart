@@ -15,13 +15,12 @@ class ApiConstants {
 
   static const String alarmsCurrent = '/api/Alarms/Current';
   static String alarmAck(String alarmId) => '/api/Alarms/Ack?AlarmId=$alarmId';
-  static String alarmsById(String id) => '/api/$id/alarms.json';
-  static String chartById(String id) => '/api/$id/chart.json';
 
   static const String historicalTagValues = '/api/Historical/TagValues';
   static const String historicalAlarms = '/api/Historical/Alarms';
 
   static const String dataSetsList = '/api/DataSets/List';
+  static String rpcScript(String scriptName) => '/api/rpc/script?scriptName=$scriptName';
 
   static String staticResource(String filename) =>
       '/Dashboard/StaticResources/$filename';

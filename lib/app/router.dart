@@ -12,26 +12,33 @@ import '../features/weather/presentation/pages/weather_page.dart';
 import '../features/alarms/presentation/pages/alarms_page.dart';
 import '../features/reports/presentation/pages/reports_page.dart';
 import '../features/settings/presentation/pages/settings_page.dart';
+import '../features/scada/presentation/pages/diagnostics_page.dart';
+import '../features/scada/presentation/pages/operation_commands_page.dart';
+import '../features/scada/presentation/pages/operation_status_page.dart';
+import '../features/auth/presentation/providers/auth_provider.dart';
 import 'main_scaffold.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/login',
+    redirect: (context, state) {
+      final isLoggedIn = authState.status == AuthStatus.authenticated;
+      final isLoginRoute = state.uri.toString() == '/login';
+      if (!isLoggedIn && !isLoginRoute) return '/login';
+      if (isLoggedIn && isLoginRoute) return '/';
+      return null;
+    },
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       ShellRoute(
         builder: (context, state, child) => MainScaffold(child: child),
         routes: [
           GoRoute(path: '/', builder: (context, state) => const DashboardPage()),
           GoRoute(path: '/map', builder: (context, state) => const MapPage()),
           GoRoute(path: '/controllers', builder: (context, state) => const ControllersListPage()),
-          GoRoute(
-            path: '/controllers/:id',
-            builder: (context, state) => ControllerDetailPage(controllerId: state.pathParameters['id']!),
-          ),
+          GoRoute(path: '/controllers/:id', builder: (context, state) => ControllerDetailPage(controllerId: state.pathParameters['id']!)),
           GoRoute(path: '/schedules', builder: (context, state) => const SchedulesPage()),
           GoRoute(path: '/schedules/editor', builder: (context, state) => const ScheduleEditorPage()),
           GoRoute(path: '/flow', builder: (context, state) => const FlowPage()),
@@ -39,6 +46,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/alarms', builder: (context, state) => const AlarmsPage()),
           GoRoute(path: '/reports', builder: (context, state) => const ReportsPage()),
           GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
+          GoRoute(path: '/diagnostics', builder: (context, state) => const DiagnosticsPage()),
+          GoRoute(path: '/operation-commands', builder: (context, state) => const OperationCommandsPage()),
+          GoRoute(path: '/operation-status', builder: (context, state) => const OperationStatusPage()),
         ],
       ),
     ],

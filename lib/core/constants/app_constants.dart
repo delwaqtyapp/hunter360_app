@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 class AppConstants {
-  static const String appName = 'Hunter 360';
-  static const String appNameAr = 'هنتر 360';
+  static const String appName = 'Abqarino SCADA';
+  static const String appNameAr = 'عبقرينو سكادا';
   static const String version = '4.99.12';
   static const int splashDuration = 3000;
   static const int animationDuration = 300;
@@ -14,6 +14,7 @@ class AppConstants {
 
   static const String storageKeyAuth = 'AuthRepsonseSuccess';
   static const String storageKeyServerUrl = 'ServerAddress';
+  static const String storageKeyLicense = 'LicenseData';
 
   static String get defaultServerUrl {
     if (kIsWeb) return '';
@@ -25,4 +26,11 @@ class AppConstants {
 
   static int get realtimePollingIntervalMs => 1000;
   static int get historicalPollingIntervalMs => 5000;
+
+  static const List<Map<String, String>> controllers = [
+    {'id': 'C000', 'name': 'C000'},
+    {'id': 'C001', 'name': 'Lanova'},
+    {'id': 'C002', 'name': 'CBP'},
+    {'id': 'C003', 'name': 'KAI'},
+  ];
 }
